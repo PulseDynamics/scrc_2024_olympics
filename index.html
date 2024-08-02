@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olympics Pool 2024</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+        }
+
+        section {
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        h2 {
+            margin-top: 40px;
+            text-align: center;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#picks">Picks</a></li>
+        </ul>
+    </nav>
+
+    <section id="home">
+        <h1>Welcome to the 2024 Olympics Pool!</h1>
+        <p>This is the official Olympics Pool for 2024. Below you'll find the picks for each participant. May the best predictor win!</p>
+    </section>
+
+    <section id="picks" style="display:none;">
+        <h1>Participants' Picks</h1>
+        <div id="picksContainer"></div>
+    </section>
+
+    <script>
+        // Function to show the corresponding section when a link is clicked
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.querySelector(link.getAttribute('href')).style.display = 'block';
+            });
+        });
+
+        // Load and parse the Excel file
+        async function loadPicks() {
+            const response = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
+            const data = await response.arrayBuffer();
+            const workbook = XLSX.read(data, { type: 'array' });
+
+            const picksContainer = document.getElementById('picksContainer');
+
+            // Loop through each sheet (each person's picks)
+            workbook.SheetNames.forEach(sheetName => {
+                const sheet = workbook.Sheets[sheetName];
+                const json = XLSX.utils.sheet_to_json(sheet);
+
+                // Create a table for each participant
+                const table = document.createElement('table');
+                table.border = 1;
+                const header = table.createTHead();
+                const headerRow = header.insertRow();
+                ['Event', 'Winner', '2nd Place', '3rd Place'].forEach(text => {
+                    const th = document.createElement('th');
+                    th.textContent = text;
+                    headerRow.appendChild(th);
+                });
+
+                const tbody = table.createTBody();
+                json.forEach(row => {
+                    const tr = tbody.insertRow();
+                    ['Event', 'Winner', '2nd Place', '3rd Place'].forEach(key => {
+                        const td = tr.insertCell();
+                        td.textContent = row[key];
+                    });
+                });
+
+                // Add participant's name as a title above their table
+                const title = document.createElement('h2');
+                title.textContent = sheetName;
+                picksContainer.appendChild(title);
+                picksContainer.appendChild(table);
+            });
+        }
+
+        // Load the picks data when the Picks page is shown
+        document.querySelector('a[href="#picks"]').addEventListener('click', loadPicks);
+    </script>
+
+</body>
+</html>
