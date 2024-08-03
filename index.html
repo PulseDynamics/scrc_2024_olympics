@@ -34,6 +34,7 @@
         h1 {
             text-align: center;
             margin-bottom: 20px;
+            font-size: 1.5em; /* Smaller title font size */
         }
 
         table {
@@ -67,6 +68,50 @@
         .not-entered {
             background-color: lightyellow;
         }
+
+        .clock {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 24px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .race-times-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .race-times {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .calendar {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .calendar th, .calendar td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            vertical-align: top;
+            width: 14.28%; /* 7 days a week */
+        }
+
+        .calendar th {
+            background-color: #333;
+            color: white;
+        }
+
+        .calendar td {
+            height: 100px;
+        }
+
+        .calendar td:hover {
+            background-color: #f1f1f1;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 </head>
@@ -81,8 +126,48 @@
     </nav>
 
     <section id="home">
-        <h1>Welcome to the 2024 Olympics Pool!</h1>
-        <p>This is the official Olympics Pool for 2024. Below you'll find the picks for each participant. May the best predictor win!</p>
+        <h1>Welcome to the 2024 Summer Olympics Pool</h1>
+
+        <div class="clock" id="clock"></div>
+
+        <div class="race-times-container">
+            <div class="race-times">
+                <h2>Race Times</h2>
+                <table class="calendar">
+                    <thead>
+                        <tr>
+                            <th>Sunday</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                            <th>Saturday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Aug 3<br><br>100m (W) Final 3:20pm</td>
+                        </tr>
+                        <tr>
+                            <td>Aug 4<br><br>100m (M) Final 3:50pm</td>
+                            <td>Aug 5<br><br>No Events</td>
+                            <td>Aug 6<br><br>200m (W) Final 3:40pm</td>
+                            <td>Aug 7<br><br>400m (M) Final 3:20pm</td>
+                            <td>Aug 8<br><br>200m (M) Final 2:30pm</td>
+                            <td>Aug 9<br><br>4x100m Relay (W) Final 1:30pm<br><br>4x100m Relay (M) Final 1:47pm<br><br>400m (W) Final 2:00pm</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </section>
 
     <section id="picks">
@@ -242,19 +327,47 @@
             // Convert standings object to array and sort by points (descending order)
             const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
 
+            let currentRank = 1;
+            let previousPoints = null;
+
             sortedStandings.forEach(([participant, points], index) => {
                 const tr = tbody.insertRow();
                 const positionCell = tr.insertCell();
                 const nameCell = tr.insertCell();
                 const pointsCell = tr.insertCell();
-                positionCell.textContent = index + 1; // Position starts from 1
+
+                if (points !== previousPoints) {
+                    currentRank = index + 1;
+                }
+                
+                positionCell.textContent = currentRank; // Position based on points
                 nameCell.textContent = participant;
                 pointsCell.textContent = points;
+
+                previousPoints = points;
             });
 
             standingsContainer.innerHTML = '';
             standingsContainer.appendChild(table);
         }
+
+        // Live clock function for 12-hour format with AM/PM
+        function updateClock() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+            const day = String(now.getDate()).padStart(2, '0');
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            const formattedTime = `${hours}:${minutes}:${seconds} ${ampm} EDT`;
+            const formattedDate = `${year}-${month}-${day}`;
+            document.getElementById('clock').textContent = `${formattedDate} ${formattedTime}`;
+        }
+        setInterval(updateClock, 1000);
     </script>
 
 </body>
