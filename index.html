@@ -11,14 +11,14 @@
             padding: 0;
             background-color: #f4f4f4;
         }
-    
+
         nav {
             background-color: #333;
             color: white;
             padding: 10px;
             text-align: center;
         }
-    
+
         nav select {
             font-size: 16px;
             padding: 5px;
@@ -26,147 +26,117 @@
             border-radius: 5px;
             max-width: 100%;
         }
-    
+
         section {
             padding: 20px;
             display: none;
         }
-    
+
         h1 {
             text-align: center;
             margin-bottom: 20px;
-            font-size: 1.5em;
+            font-size: 1.5em; /* Smaller title font size */
         }
-    
-        table {
-            width: 100%;
-            margin-bottom: 20px;
-            border-collapse: collapse;
-            overflow-x: auto; /* Enable horizontal scrolling */
+
+        .event-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
         }
-    
-        table, th, td {
-            border: 1px solid black;
-        }
-    
-        th, td {
+
+        .event-list li {
+            background-color: #fff;
             padding: 10px;
-            text-align: left;
-            font-size: 16px; /* Reduced font size for better fitting */
-        }
-    
-        h2 {
-            margin-top: 40px;
-            text-align: center;
-        }
-    
-        .correct {
-            background-color: lightgreen;
-        }
-    
-        .incorrect {
-            background-color: lightcoral;
-        }
-    
-        .not-entered {
-            background-color: lightyellow;
-        }
-    
-        .clock {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 18px;
-            text-align: center;
-            margin-top: 20px;
-        }
-    
-        .race-times-container {
-            display: flex;
-            justify-content: center;
-        }
-    
-        .race-times {
-            margin-top: 20px;
-            text-align: left;
-            width: 100%;
-            max-width: 800px;
-        }
-    
-        .calendar {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-    
-        .calendar th, .calendar td {
+            margin-bottom: 10px;
             border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-            vertical-align: top;
+            border-radius: 5px;
+            font-size: 16px;
         }
-    
-        .calendar th {
-            background-color: #333;
-            color: white;
-        }
-    
-        .calendar td {
-            height: 60px;
-        }
-    
-        .calendar td.completed {
+
+        .event-list li.completed {
             color: red;
             position: relative;
         }
-    
-        .calendar td.completed .completed-text {
+
+        .event-list li.completed .completed-text {
             font-weight: bold;
             text-decoration: none;
             display: block;
             margin-top: 5px;
             color: green;
         }
-    
-        .calendar td:hover {
+
+        .event-list li:hover {
             background-color: #f1f1f1;
         }
-    
-        /* Responsive table container */
-        .table-container {
-            overflow-x: auto; /* Enables horizontal scrolling */
+
+        h2 {
+            margin-top: 40px;
+            text-align: center;
         }
-    
+
+        .correct {
+            background-color: lightgreen;
+        }
+
+        .incorrect {
+            background-color: lightcoral;
+        }
+
+        .not-entered {
+            background-color: lightyellow;
+        }
+
+        .clock {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .race-times-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .race-times {
+            margin-top: 20px;
+            text-align: left;
+            width: 100%;
+            max-width: 800px; /* Limits max-width on larger screens */
+        }
+
         /* Media query for smaller screens */
         @media (max-width: 600px) {
-            .calendar td {
+            th, td {
                 padding: 5px;
                 font-size: 12px;
             }
-    
-            th, td {
-                padding: 5px;
-                font-size: 12px; /* Further reduced font size for small screens */
-            }
-    
+
             .race-times-container {
                 flex-direction: column;
                 align-items: center;
             }
-    
+
             nav select {
                 font-size: 14px;
                 padding: 4px;
             }
-    
+
             h1 {
                 font-size: 1.2em;
             }
-    
+
             .clock {
+                font-size: 14px;
+            }
+
+            .event-list li {
+                padding: 8px;
                 font-size: 14px;
             }
         }
     </style>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 </head>
 <body>
@@ -186,40 +156,33 @@
 
         <div class="race-times-container">
             <div class="race-times">
-                <h2>Race Times</h2>
-                <table class="calendar">
-                    <thead>
-                        <tr>
-                            <th>Sun</th>
-                            <th>Mon</th>
-                            <th>Tue</th>
-                            <th>Wed</th>
-                            <th>Thur</th>
-                            <th>Fri</th>
-                            <th>Sat</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td class="event" data-event-date="2024-08-03T15:20:00">Aug 3<br><br>100m (W) Final 3:20pm</td>
-                        </tr>
-                        <tr>
-                            <td class="event" data-event-date="2024-08-04T15:50:00">Aug 4<br><br>100m (M) Final 3:50pm</td>
-                            <td class="event" data-event-date="2024-08-05T00:00:00">Aug 5<br><br>No Events</td>
-                            <td class="event" data-event-date="2024-08-06T15:40:00">Aug 6<br><br>200m (W) Final 3:40pm</td>
-                            <td class="event" data-event-date="2024-08-07T15:20:00">Aug 7<br><br>400m (M) Final 3:20pm</td>
-                            <td class="event" data-event-date="2024-08-08T14:30:00">Aug 8<br><br>200m (M) Final 2:30pm</td>
-                            <td class="event" data-event-date="2024-08-09T13:30:00">Aug 9<br><br>4x100m Relay (W) Final 1:30pm<br><br>4x100m Relay (M) Final 1:47pm<br><br>400m (W) Final 2:00pm</td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <h2>Race Schedule</h2>
+                <ul class="event-list">
+                    <li class="event" data-event-date="2024-08-03T15:30:00">
+                        Aug 3 - 100m (W) - 3:20pm
+                    </li>
+                    <li class="event" data-event-date="2024-08-04T16:00:00">
+                        Aug 4 - 100m (M) - 3:50pm
+                    </li>
+                    <li class="event" data-event-date="2024-08-06T15:50:00">
+                        Aug 6 - 200m (W) - 3:40pm
+                    </li>
+                    <li class="event" data-event-date="2024-08-07T15:30:00">
+                        Aug 7 - 400m (M) - 3:20pm
+                    </li>
+                    <li class="event" data-event-date="2024-08-08T14:40:00">
+                        Aug 8 - 200m (M) - 2:30pm
+                    </li>
+                    <li class="event" data-event-date="2024-08-09T13:40:00">
+                        Aug 9 - 4x100m Relay (W) - 1:30pm
+                    </li>
+                    <li class="event" data-event-date="2024-08-09T13:57:00">
+                        Aug 9 - 4x100m Relay (M) - 1:47pm
+                    </li>
+                    <li class="event" data-event-date="2024-08-09T14:10:00">
+                        Aug 9 - 400m (W) - 2:00pm
+                    </li>
+                </ul>
             </div>
         </div>
     </section>
@@ -420,7 +383,7 @@
             const seconds = String(now.getSeconds()).padStart(2, '0');
             const ampm = hours >= 12 ? 'PM' : 'AM';
             hours = hours % 12;
-            hours = hours ? hours : 12; // the hour '0' should be '12'
+            hours = hours ? 12 : 12; // the hour '0' should be '12'
             const formattedTime = `${hours}:${minutes}:${seconds} ${ampm} EDT`;
             const formattedDate = `${year}-${month}-${day}`;
             document.getElementById('clock').textContent = `${formattedDate} ${formattedTime}`;
@@ -431,16 +394,16 @@
 
         // Function to check and mark completed events
         function checkEventCompletion(currentTime) {
-            const eventCells = document.querySelectorAll('.calendar td.event');
-            eventCells.forEach(cell => {
-                const eventDate = new Date(cell.getAttribute('data-event-date'));
+            const eventItems = document.querySelectorAll('.event-list li.event');
+            eventItems.forEach(item => {
+                const eventDate = new Date(item.getAttribute('data-event-date'));
                 if (currentTime >= eventDate) {
-                    cell.classList.add('completed');
-                    if (!cell.querySelector('.completed-text')) {
+                    item.classList.add('completed');
+                    if (!item.querySelector('.completed-text')) {
                         const completedText = document.createElement('span');
                         completedText.className = 'completed-text';
                         completedText.textContent = 'COMPLETED';
-                        cell.appendChild(completedText);
+                        item.appendChild(completedText);
                     }
                 }
             });
