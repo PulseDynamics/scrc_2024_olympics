@@ -11,14 +11,14 @@
             padding: 0;
             background-color: #f4f4f4;
         }
-
+    
         nav {
             background-color: #333;
             color: white;
             padding: 10px;
             text-align: center;
         }
-
+    
         nav select {
             font-size: 16px;
             padding: 5px;
@@ -26,140 +26,147 @@
             border-radius: 5px;
             max-width: 100%;
         }
-
+    
         section {
             padding: 20px;
             display: none;
         }
-
+    
         h1 {
             text-align: center;
             margin-bottom: 20px;
-            font-size: 1.5em; /* Smaller title font size */
+            font-size: 1.5em;
         }
-
+    
         table {
             width: 100%;
             margin-bottom: 20px;
             border-collapse: collapse;
+            overflow-x: auto; /* Enable horizontal scrolling */
         }
-
+    
         table, th, td {
             border: 1px solid black;
         }
-
+    
         th, td {
             padding: 10px;
             text-align: left;
-            font-size: 20px;
+            font-size: 16px; /* Reduced font size for better fitting */
         }
-
+    
         h2 {
             margin-top: 40px;
             text-align: center;
         }
-
+    
         .correct {
             background-color: lightgreen;
         }
-
+    
         .incorrect {
             background-color: lightcoral;
         }
-
+    
         .not-entered {
             background-color: lightyellow;
         }
-
+    
         .clock {
             font-family: 'Courier New', Courier, monospace;
             font-size: 18px;
             text-align: center;
             margin-top: 20px;
         }
-
+    
         .race-times-container {
             display: flex;
             justify-content: center;
         }
-
+    
         .race-times {
             margin-top: 20px;
             text-align: left;
             width: 100%;
-            max-width: 800px; /* Limits max-width on larger screens */
+            max-width: 800px;
         }
-
+    
         .calendar {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-
+    
         .calendar th, .calendar td {
             border: 1px solid #ddd;
             padding: 10px;
             text-align: center;
             vertical-align: top;
         }
-
+    
         .calendar th {
             background-color: #333;
             color: white;
         }
-
+    
         .calendar td {
-            height: 60px; /* Adjust height for smaller screens */
+            height: 60px;
         }
-
+    
         .calendar td.completed {
-    color: red;
-    position: relative;
-}
-
-.calendar td.completed .completed-text {
-    font-weight: bold;
-    text-decoration: none; /* Remove strikethrough from COMPLETED text */
-    display: block;
-    margin-top: 5px;
-    color: green; /* Ensures the COMPLETED text is distinct */
-}
-
+            color: red;
+            position: relative;
+        }
+    
+        .calendar td.completed .completed-text {
+            font-weight: bold;
+            text-decoration: none;
+            display: block;
+            margin-top: 5px;
+            color: green;
+        }
+    
         .calendar td:hover {
             background-color: #f1f1f1;
         }
-
+    
+        /* Responsive table container */
+        .table-container {
+            overflow-x: auto; /* Enables horizontal scrolling */
+        }
+    
         /* Media query for smaller screens */
         @media (max-width: 600px) {
             .calendar td {
                 padding: 5px;
-                font-size: 12px; /* Smaller text on small screens */
+                font-size: 12px;
             }
-
+    
             th, td {
                 padding: 5px;
-                font-size: 14px;
+                font-size: 12px; /* Further reduced font size for small screens */
             }
-
+    
             .race-times-container {
                 flex-direction: column;
                 align-items: center;
             }
-
+    
             nav select {
                 font-size: 14px;
                 padding: 4px;
             }
-
+    
             h1 {
                 font-size: 1.2em;
             }
-
+    
             .clock {
                 font-size: 14px;
             }
         }
     </style>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 </head>
 <body>
