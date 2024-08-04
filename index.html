@@ -135,6 +135,66 @@
                 padding: 8px;
                 font-size: 14px;
             }
+            /* Podium style */
+.podium-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: 20px;
+}
+
+.podium-step {
+    text-align: center;
+    padding: 20px;
+    margin: 0 10px;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.first-place {
+    background-color: gold;
+    height: 150px;
+    width: 150px;
+}
+
+.second-place {
+    background-color: silver;
+    height: 120px;
+    width: 120px;
+}
+
+.third-place {
+    background-color: #cd7f32; /* Bronze */
+    height: 100px;
+    width: 100px;
+}
+
+.podium-step h2 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.podium-step p {
+    margin: 5px 0 0;
+}
+
+/* Podium and standings separation */
+.standings-table-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px; /* Space between the podium and the table */
+}
+
+/* Center the remaining participants' table */
+.standings-table {
+    width: 80%;
+    max-width: 600px; /* Adjust the max-width as needed */
+    margin: 0 auto;
+    text-align: center;
+}
+
+
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
@@ -329,48 +389,69 @@
             displayStandings(standings);
         }
 
-        // Function to display the standings
         function displayStandings(standings) {
-            const standingsContainer = document.getElementById('standingsContainer');
-            const table = document.createElement('table');
-            table.border = 1;
+    const standingsContainer = document.getElementById('standingsContainer');
+    standingsContainer.innerHTML = ''; // Clear previous content
 
-            const header = table.createTHead();
-            const headerRow = header.insertRow();
-            ['Position', 'Participant', 'Points'].forEach(text => {
-                const th = document.createElement('th');
-                th.textContent = text;
-                headerRow.appendChild(th);
-            });
+    // Convert standings object to array and sort by points (descending order)
+    const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
 
-            const tbody = table.createTBody();
+    // Create the podium structure
+    const podiumContainer = document.createElement('div');
+    podiumContainer.className = 'podium-container';
 
-            // Convert standings object to array and sort by points (descending order)
-            const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
+    const secondPlace = document.createElement('div');
+    secondPlace.className = 'podium-step second-place';
+    secondPlace.innerHTML = `<h2>${sortedStandings[1][0]}</h2><p>${sortedStandings[1][1]} Points</p>`;
 
-            let currentRank = 1;
-            let previousPoints = null;
+    const firstPlace = document.createElement('div');
+    firstPlace.className = 'podium-step first-place';
+    firstPlace.innerHTML = `<h2>${sortedStandings[0][0]}</h2><p>${sortedStandings[0][1]} Points</p>`;
 
-            sortedStandings.forEach(([participant, points], index) => {
-                const tr = tbody.insertRow();
-                const positionCell = tr.insertCell();
-                const nameCell = tr.insertCell();
-                const pointsCell = tr.insertCell();
+    const thirdPlace = document.createElement('div');
+    thirdPlace.className = 'podium-step third-place';
+    thirdPlace.innerHTML = `<h2>${sortedStandings[2][0]}</h2><p>${sortedStandings[2][1]} Points</p>`;
 
-                if (points !== previousPoints) {
-                    currentRank = index + 1;
-                }
-                
-                positionCell.textContent = currentRank; // Position based on points
-                nameCell.textContent = participant;
-                pointsCell.textContent = points;
+    podiumContainer.appendChild(secondPlace);
+    podiumContainer.appendChild(firstPlace);
+    podiumContainer.appendChild(thirdPlace);
+    standingsContainer.appendChild(podiumContainer);
 
-                previousPoints = points;
-            });
+    // Create a container for the remaining standings
+    const standingsTableContainer = document.createElement('div');
+    standingsTableContainer.className = 'standings-table-container';
 
-            standingsContainer.innerHTML = '';
-            standingsContainer.appendChild(table);
-        }
+    // Create a table for the rest of the standings
+    const table = document.createElement('table');
+    table.className = 'standings-table';
+    table.border = 1;
+
+    const header = table.createTHead();
+    const headerRow = header.insertRow();
+    ['Position', 'Participant', 'Points'].forEach(text => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        headerRow.appendChild(th);
+    });
+
+    const tbody = table.createTBody();
+
+    sortedStandings.slice(3).forEach(([participant, points], index) => {
+        const tr = tbody.insertRow();
+        const positionCell = tr.insertCell();
+        const nameCell = tr.insertCell();
+        const pointsCell = tr.insertCell();
+
+        positionCell.textContent = index + 4; // Adjust for the first three positions
+        nameCell.textContent = participant;
+        pointsCell.textContent = points;
+    });
+
+    standingsTableContainer.appendChild(table);
+    standingsContainer.appendChild(standingsTableContainer);
+}
+
+
 
         // Live clock function for 12-hour format with AM/PM
         function updateClock() {
