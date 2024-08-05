@@ -135,67 +135,78 @@
                 padding: 8px;
                 font-size: 14px;
             }
-            /* Podium style */
-.podium-container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    margin-top: 20px;
-}
-
-.podium-step {
-    text-align: center;
-    padding: 20px;
-    margin: 0 10px;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-}
-
-.first-place {
-    background-color: gold;
-    height: 200px;
-    width: 150px;
-}
-
-.second-place {
-    background-color: silver;
-    height: 120px;
-    width: 120px;
-}
-
-.third-place {
-    background-color: #cd7f32; /* Bronze */
-    height: 80px;
-    width: 100px;
-}
-
-.podium-step h2 {
-    margin: 0;
-    font-size: 1.2em;
-}
-
-.podium-step p {
-    margin: 5px 0 0;
-}
-
-/* Podium and standings separation */
-.standings-table-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px; /* Space between the podium and the table */
-}
-
-/* Center the remaining participants' table */
-.standings-table {
-    width: 80%;
-    max-width: 600px; /* Adjust the max-width as needed */
-    margin: 0 auto;
-    text-align: center;
-}
-
-
         }
+
+        /* Center the PICKS page content */
+        #picksContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Podium style */
+        .podium-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            margin-top: 20px;
+        }
+
+        .podium-step {
+            text-align: center;
+            padding: 20px;
+            margin: 0 10px;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .first-place {
+            background-color: gold;
+            height: 200px;
+            width: 150px;
+            order: 2;
+        }
+
+        .second-place {
+            background-color: silver;
+            height: 160px;
+            width: 120px;
+            order: 1;
+        }
+
+        .third-place {
+            background-color: #cd7f32; /* Bronze */
+            height: 120px;
+            width: 100px;
+            order: 3;
+        }
+
+        .podium-step h2 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .podium-step p {
+            margin: 5px 0 0;
+        }
+
+        /* Podium and standings separation */
+        .standings-table-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px; /* Space between the podium and the table */
+        }
+
+        /* Center the remaining participants' table */
+        .standings-table {
+            width: 80%;
+            max-width: 800px; /* Adjust the max-width as needed */
+            margin: 0 auto;
+            text-align: center;
+        }
+
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 </head>
@@ -348,113 +359,113 @@
         }
 
         // Function to calculate standings
-        async function calculateStandings() {
-            // Load the event results
-            const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
-            const data = await response.arrayBuffer();
-            const resultsWorkbook = XLSX.read(data, { type: 'array' });
-            const resultsSheet = resultsWorkbook.Sheets[resultsWorkbook.SheetNames[0]];
-            const results = XLSX.utils.sheet_to_json(resultsSheet);
+    async function calculateStandings() {
+        // Load the event results
+        const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
+        const data = await response.arrayBuffer();
+        const resultsWorkbook = XLSX.read(data, { type: 'array' });
+        const resultsSheet = resultsWorkbook.Sheets[resultsWorkbook.SheetNames[0]];
+        const results = XLSX.utils.sheet_to_json(resultsSheet);
 
-            // Load the participants' picks
-            const picksResponse = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
-            const picksData = await picksResponse.arrayBuffer();
-            const picksWorkbook = XLSX.read(picksData, { type: 'array' });
+        // Load the participants' picks
+        const picksResponse = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
+        const picksData = await picksResponse.arrayBuffer();
+        const picksWorkbook = XLSX.read(picksData, { type: 'array' });
 
-            const standings = {};
+        const standings = {};
 
-            picksWorkbook.SheetNames.forEach(sheetName => {
-                if (sheetName === 'ALL_ENTRIES') return; // Skip the "ALL_ENTRIES" sheet
+        picksWorkbook.SheetNames.forEach(sheetName => {
+            if (sheetName === 'ALL_ENTRIES') return; // Skip the "ALL_ENTRIES" sheet
 
-                const sheet = picksWorkbook.Sheets[sheetName];
-                const picks = XLSX.utils.sheet_to_json(sheet);
+            const sheet = picksWorkbook.Sheets[sheetName];
+            const picks = XLSX.utils.sheet_to_json(sheet);
 
-                let totalPoints = 0;
+            let totalPoints = 0;
 
-                picks.forEach(pick => {
-                    // Ensure the pick has valid entries
-                    if (pick['Event'] && pick['Winner'] && pick['2nd Place'] && pick['3rd Place']) {
-                        const result = results.find(r => r['Event'] === pick['Event']);
-                        if (result) {
-                            let points = 0;
-                            if (result['Winner'] === pick['Winner']) points += 10;
-                            if (result['2nd Place'] === pick['2nd Place']) points += 6;
-                            if (result['3rd Place'] === pick['3rd Place']) points += 4;
-                            if (points === 20) points += 5; // Bonus for all correct
-                            totalPoints += points;
-                        }
+            picks.forEach(pick => {
+                // Ensure the pick has valid entries
+                if (pick['Event'] && pick['Winner'] && pick['2nd Place'] && pick['3rd Place']) {
+                    const result = results.find(r => r['Event'] === pick['Event']);
+                    if (result) {
+                        let points = 0;
+                        if (result['Winner'] === pick['Winner']) points += 10;
+                        if (result['2nd Place'] === pick['2nd Place']) points += 6;
+                        if (result['3rd Place'] === pick['3rd Place']) points += 4;
+                        if (points === 20) points += 5; // Bonus for all correct
+                        totalPoints += points;
                     }
-                });
-
-                standings[sheetName] = totalPoints;
+                }
             });
 
-            displayStandings(standings);
-        }
+            standings[sheetName] = totalPoints;
+        });
 
-        function displayStandings(standings) {
-    const standingsContainer = document.getElementById('standingsContainer');
-    standingsContainer.innerHTML = ''; // Clear previous content
+        displayStandings(standings);
+    }
 
-    // Convert standings object to array and sort by points (descending order)
-    const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
+    function displayStandings(standings) {
+        const standingsContainer = document.getElementById('standingsContainer');
+        standingsContainer.innerHTML = ''; // Clear previous content
 
-    // Create the podium structure
-    const podiumContainer = document.createElement('div');
-    podiumContainer.className = 'podium-container';
+        // Convert standings object to array and sort by points (descending order)
+        const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
 
-    const secondPlace = document.createElement('div');
-    secondPlace.className = 'podium-step second-place';
-    secondPlace.innerHTML = `<h2>${sortedStandings[1][0]}</h2><p>${sortedStandings[1][1]} Points</p>`;
+        // Handle podium positions with ties
+        const podiumContainer = document.createElement('div');
+        podiumContainer.className = 'podium-container';
 
-    const firstPlace = document.createElement('div');
-    firstPlace.className = 'podium-step first-place';
-    firstPlace.innerHTML = `<h2>${sortedStandings[0][0]}</h2><p>${sortedStandings[0][1]} Points</p>`;
+        const firstPlacePoints = sortedStandings[0][1];
+        const firstPlaceParticipants = sortedStandings.filter(([participant, points]) => points === firstPlacePoints);
 
-    const thirdPlace = document.createElement('div');
-    thirdPlace.className = 'podium-step third-place';
-    thirdPlace.innerHTML = `<h2>${sortedStandings[2][0]}</h2><p>${sortedStandings[2][1]} Points</p>`;
+        firstPlaceParticipants.forEach(([participant, points]) => {
+            const step = document.createElement('div');
+            step.className = `podium-step first-place`;
+            step.innerHTML = `<h2>${participant}</h2><p>${points} Points</p>`;
+            podiumContainer.appendChild(step);
+        });
 
-    podiumContainer.appendChild(secondPlace);
-    podiumContainer.appendChild(firstPlace);
-    podiumContainer.appendChild(thirdPlace);
-    standingsContainer.appendChild(podiumContainer);
+        standingsContainer.appendChild(podiumContainer);
 
-    // Create a container for the remaining standings
-    const standingsTableContainer = document.createElement('div');
-    standingsTableContainer.className = 'standings-table-container';
+        // Create a container for the remaining standings
+        const standingsTableContainer = document.createElement('div');
+        standingsTableContainer.className = 'standings-table-container';
 
-    // Create a table for the rest of the standings
-    const table = document.createElement('table');
-    table.className = 'standings-table';
-    table.border = 1;
+        // Create a table for the rest of the standings
+        const table = document.createElement('table');
+        table.className = 'standings-table';
+        table.border = 1;
 
-    const header = table.createTHead();
-    const headerRow = header.insertRow();
-    ['Position', 'Participant', 'Points'].forEach(text => {
-        const th = document.createElement('th');
-        th.textContent = text;
-        headerRow.appendChild(th);
-    });
+        const header = table.createTHead();
+        const headerRow = header.insertRow();
+        ['Position', 'Participant', 'Current Points'].forEach(text => {
+            const th = document.createElement('th');
+            th.textContent = text;
+            headerRow.appendChild(th);
+        });
 
-    const tbody = table.createTBody();
+        const tbody = table.createTBody();
 
-    sortedStandings.slice(3).forEach(([participant, points], index) => {
-        const tr = tbody.insertRow();
-        const positionCell = tr.insertCell();
-        const nameCell = tr.insertCell();
-        const pointsCell = tr.insertCell();
+        let currentRank = 1;
+        let previousPoints = sortedStandings[0][1];
+        sortedStandings.forEach(([participant, points], index) => {
+            if (points !== previousPoints) {
+                currentRank = index + 1;
+            }
+            previousPoints = points;
 
-        positionCell.textContent = index + 4; // Adjust for the first three positions
-        nameCell.textContent = participant;
-        pointsCell.textContent = points;
-    });
+            const tr = tbody.insertRow();
+            const positionCell = tr.insertCell();
+            const nameCell = tr.insertCell();
+            const pointsCell = tr.insertCell();
 
-    standingsTableContainer.appendChild(table);
-    standingsContainer.appendChild(standingsTableContainer);
-}
+            positionCell.textContent = currentRank;
+            nameCell.textContent = participant;
+            pointsCell.textContent = points;
+        });
 
-
+        standingsTableContainer.appendChild(table);
+        standingsContainer.appendChild(standingsTableContainer);
+    }
 
         // Live clock function for 12-hour format with AM/PM
         function updateClock() {
