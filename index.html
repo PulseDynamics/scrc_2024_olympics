@@ -12,19 +12,24 @@
             background-color: #f4f4f4;
         }
 
-        nav {
+        header {
             background-color: #333;
             color: white;
             padding: 10px;
-            text-align: center;
+            display: flex;
+            align-items: center;
         }
 
-        nav select {
+        header .brand {
+            flex-grow: 1;
+            font-size: 18px;
+        }
+
+        header select {
             font-size: 16px;
             padding: 5px;
             border: none;
             border-radius: 5px;
-            max-width: 100%;
         }
 
         section {
@@ -106,6 +111,33 @@
             max-width: 800px; /* Limits max-width on larger screens */
         }
 
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+        }
+
+        #resultsContainer, #standingsContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+        }
+
+        #resultsContainer table, #standingsContainer table {
+            margin-top: -20vh; /* Adjust vertically to center */
+            border-collapse: collapse; /* Ensure borders are collapsed */
+        }
+
+        #resultsContainer th, #resultsContainer td, 
+        #standingsContainer th, #standingsContainer td {
+            text-align: center; /* Center text in table cells */
+            padding: 8px; /* Add some padding for better spacing */
+            border: 1px solid #ddd; /* Add border for table cells */
+        }
+
         /* Media query for smaller screens */
         @media (max-width: 600px) {
             th, td {
@@ -118,7 +150,7 @@
                 align-items: center;
             }
 
-            nav select {
+            header select {
                 font-size: 14px;
                 padding: 4px;
             }
@@ -135,76 +167,15 @@
                 padding: 8px;
                 font-size: 14px;
             }
-        }
 
-        /* Center the PICKS page content */
-        #picksContainer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+            #resultsContainer, #standingsContainer {
+                height: auto;
+                margin-top: 20px;
+            }
 
-        /* Podium style */
-        .podium-container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            margin-top: 20px;
-        }
-
-        .podium-step {
-            text-align: center;
-            padding: 20px;
-            margin: 0 10px;
-            color: white;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-
-        .first-place {
-            background-color: gold;
-            height: 200px;
-            width: 150px;
-            order: 2;
-        }
-
-        .second-place {
-            background-color: silver;
-            height: 160px;
-            width: 120px;
-            order: 1;
-        }
-
-        .third-place {
-            background-color: #cd7f32; /* Bronze */
-            height: 120px;
-            width: 100px;
-            order: 3;
-        }
-
-        .podium-step h2 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-
-        .podium-step p {
-            margin: 5px 0 0;
-        }
-
-        /* Podium and standings separation */
-        .standings-table-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 40px; /* Space between the podium and the table */
-        }
-
-        /* Center the remaining participants' table */
-        .standings-table {
-            width: 80%;
-            max-width: 800px; /* Adjust the max-width as needed */
-            margin: 0 auto;
-            text-align: center;
+            #resultsContainer table, #standingsContainer table {
+                margin-top: 0;
+            }
         }
 
     </style>
@@ -212,13 +183,15 @@
 </head>
 <body>
 
-    <nav>
+    <header>
+        <div class="brand">SCRC Pool</div>
         <select id="pageSelector">
             <option value="#home">Home</option>
             <option value="#picks">Picks</option>
             <option value="#standings">Standings</option>
+            <option value="#results">Results</option>
         </select>
-    </nav>
+    </header>
 
     <section id="home">
         <h2>Welcome to the 2024 Summer Olympics Pool</h2>
@@ -275,6 +248,15 @@
         <div id="standingsContainer"></div>
     </section>
 
+    <section id="results">
+        <h1>Event Results</h1>
+        <div id="resultsContainer"></div>
+    </section>
+
+    <footer>
+        &copy; PulseDynamics
+    </footer>
+
     <script>
         // Function to show the corresponding section when a selection is made
         document.getElementById('pageSelector').addEventListener('change', function() {
@@ -288,6 +270,8 @@
                 loadPicks();
             } else if (selectedPage === '#standings') {
                 calculateStandings();
+            } else if (selectedPage === '#results') {
+                loadResults();
             }
         });
 
@@ -334,7 +318,7 @@
 
                     ['Event', 'Winner', '2nd Place', '3rd Place'].forEach((key, index) => {
                         const td = tr.insertCell();
-                        td.textContent = row[key];
+                        td.textContent = row[key] || '("")';
 
                         if (index > 0) { // Apply color only for Winner, 2nd Place, and 3rd Place columns
                             if (result && result[key]) {
@@ -359,113 +343,118 @@
         }
 
         // Function to calculate standings
-    async function calculateStandings() {
-        // Load the event results
-        const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
-        const data = await response.arrayBuffer();
-        const resultsWorkbook = XLSX.read(data, { type: 'array' });
-        const resultsSheet = resultsWorkbook.Sheets[resultsWorkbook.SheetNames[0]];
-        const results = XLSX.utils.sheet_to_json(resultsSheet);
+        async function calculateStandings() {
+            // Load the event results
+            const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
+            const data = await response.arrayBuffer();
+            const resultsWorkbook = XLSX.read(data, { type: 'array' });
+            const resultsSheet = resultsWorkbook.Sheets[resultsWorkbook.SheetNames[0]];
+            const results = XLSX.utils.sheet_to_json(resultsSheet);
 
-        // Load the participants' picks
-        const picksResponse = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
-        const picksData = await picksResponse.arrayBuffer();
-        const picksWorkbook = XLSX.read(picksData, { type: 'array' });
+            // Load the participants' picks
+            const picksResponse = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
+            const picksData = await picksResponse.arrayBuffer();
+            const picksWorkbook = XLSX.read(picksData, { type: 'array' });
 
-        const standings = {};
+            const standings = {};
 
-        picksWorkbook.SheetNames.forEach(sheetName => {
-            if (sheetName === 'ALL_ENTRIES') return; // Skip the "ALL_ENTRIES" sheet
+            picksWorkbook.SheetNames.forEach(sheetName => {
+                if (sheetName === 'ALL_ENTRIES') return; // Skip the "ALL_ENTRIES" sheet
 
-            const sheet = picksWorkbook.Sheets[sheetName];
-            const picks = XLSX.utils.sheet_to_json(sheet);
+                const sheet = picksWorkbook.Sheets[sheetName];
+                const picks = XLSX.utils.sheet_to_json(sheet);
 
-            let totalPoints = 0;
+                let totalPoints = 0;
 
-            picks.forEach(pick => {
-                // Ensure the pick has valid entries
-                if (pick['Event'] && pick['Winner'] && pick['2nd Place'] && pick['3rd Place']) {
-                    const result = results.find(r => r['Event'] === pick['Event']);
-                    if (result) {
-                        let points = 0;
-                        if (result['Winner'] === pick['Winner']) points += 10;
-                        if (result['2nd Place'] === pick['2nd Place']) points += 6;
-                        if (result['3rd Place'] === pick['3rd Place']) points += 4;
-                        if (points === 20) points += 5; // Bonus for all correct
-                        totalPoints += points;
+                picks.forEach(pick => {
+                    // Ensure the pick has valid entries
+                    if (pick['Event'] && pick['Winner'] && pick['2nd Place'] && pick['3rd Place']) {
+                        const result = results.find(r => r['Event'] === pick['Event']);
+                        if (result) {
+                            let points = 0;
+                            if (result['Winner'] === pick['Winner']) points += 10;
+                            if (result['2nd Place'] === pick['2nd Place']) points += 6;
+                            if (result['3rd Place'] === pick['3rd Place']) points += 4;
+                            if (points === 20) points += 5; // Bonus for all correct
+                            totalPoints += points;
+                        }
                     }
-                }
+                });
+
+                standings[sheetName] = totalPoints;
             });
 
-            standings[sheetName] = totalPoints;
-        });
+            displayStandings(standings);
+        }
 
-        displayStandings(standings);
-    }
+        function displayStandings(standings) {
+            const standingsContainer = document.getElementById('standingsContainer');
+            standingsContainer.innerHTML = ''; // Clear previous content
 
-    function displayStandings(standings) {
-        const standingsContainer = document.getElementById('standingsContainer');
-        standingsContainer.innerHTML = ''; // Clear previous content
+            // Convert standings object to array and sort by points (descending order)
+            const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
 
-        // Convert standings object to array and sort by points (descending order)
-        const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
+            // Create a table for the standings
+            const table = document.createElement('table');
+            table.className = 'standings-table';
+            table.border = 1;
 
-        // Handle podium positions with ties
-        const podiumContainer = document.createElement('div');
-        podiumContainer.className = 'podium-container';
+            const header = table.createTHead();
+            const headerRow = header.insertRow();
+            ['Participant', 'Current Points'].forEach(text => {
+                const th = document.createElement('th');
+                th.textContent = text;
+                headerRow.appendChild(th);
+            });
 
-        const firstPlacePoints = sortedStandings[0][1];
-        const firstPlaceParticipants = sortedStandings.filter(([participant, points]) => points === firstPlacePoints);
+            const tbody = table.createTBody();
 
-        firstPlaceParticipants.forEach(([participant, points]) => {
-            const step = document.createElement('div');
-            step.className = `podium-step first-place`;
-            step.innerHTML = `<h2>${participant}</h2><p>${points} Points</p>`;
-            podiumContainer.appendChild(step);
-        });
+            sortedStandings.forEach(([participant, points]) => {
+                const tr = tbody.insertRow();
+                const nameCell = tr.insertCell();
+                const pointsCell = tr.insertCell();
 
-        standingsContainer.appendChild(podiumContainer);
+                nameCell.textContent = participant;
+                pointsCell.textContent = points;
+            });
 
-        // Create a container for the remaining standings
-        const standingsTableContainer = document.createElement('div');
-        standingsTableContainer.className = 'standings-table-container';
+            standingsContainer.appendChild(table);
+        }
 
-        // Create a table for the rest of the standings
-        const table = document.createElement('table');
-        table.className = 'standings-table';
-        table.border = 1;
+        // Function to load and display results on the Results page
+        async function loadResults() {
+            const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
+            const data = await response.arrayBuffer();
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const json = XLSX.utils.sheet_to_json(sheet);
 
-        const header = table.createTHead();
-        const headerRow = header.insertRow();
-        ['Position', 'Participant', 'Current Points'].forEach(text => {
-            const th = document.createElement('th');
-            th.textContent = text;
-            headerRow.appendChild(th);
-        });
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = ''; // Clear previous content
 
-        const tbody = table.createTBody();
+            // Create a table for the results
+            const table = document.createElement('table');
+            table.border = 1;
+            const header = table.createTHead();
+            const headerRow = header.insertRow();
+            ['Event', 'Winner', '2nd Place', '3rd Place'].forEach(text => {
+                const th = document.createElement('th');
+                th.textContent = text;
+                headerRow.appendChild(th);
+            });
 
-        let currentRank = 1;
-        let previousPoints = sortedStandings[0][1];
-        sortedStandings.forEach(([participant, points], index) => {
-            if (points !== previousPoints) {
-                currentRank = index + 1;
-            }
-            previousPoints = points;
+            const tbody = table.createTBody();
+            json.forEach(row => {
+                const tr = tbody.insertRow();
+                ['Event', 'Winner', '2nd Place', '3rd Place'].forEach(key => {
+                    const td = tr.insertCell();
+                    td.textContent = row[key] || '*';
+                    td.style.textAlign = "center"; // Center text in cells
+                });
+            });
 
-            const tr = tbody.insertRow();
-            const positionCell = tr.insertCell();
-            const nameCell = tr.insertCell();
-            const pointsCell = tr.insertCell();
-
-            positionCell.textContent = currentRank;
-            nameCell.textContent = participant;
-            pointsCell.textContent = points;
-        });
-
-        standingsTableContainer.appendChild(table);
-        standingsContainer.appendChild(standingsTableContainer);
-    }
+            resultsContainer.appendChild(table);
+        }
 
         // Live clock function for 12-hour format with AM/PM
         function updateClock() {
