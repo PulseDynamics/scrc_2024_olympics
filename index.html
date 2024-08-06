@@ -370,56 +370,57 @@
 
         // Function to calculate standings
        // Function to calculate standings
-    async function calculateStandings() {
-        // Load the event results
-        const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
-        const data = await response.arrayBuffer();
-        const resultsWorkbook = XLSX.read(data, { type: 'array' });
-        const resultsSheet = resultsWorkbook.Sheets[resultsWorkbook.SheetNames[0]];
-        const results = XLSX.utils.sheet_to_json(resultsSheet);
+   async function calculateStandings() {
+    // Load the event results
+    const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
+    const data = await response.arrayBuffer();
+    const resultsWorkbook = XLSX.read(data, { type: 'array' });
+    const resultsSheet = resultsWorkbook.Sheets[resultsWorkbook.SheetNames[0]];
+    const results = XLSX.utils.sheet_to_json(resultsSheet);
 
-        // Load the participants' picks
-        const picksResponse = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
-        const picksData = await picksResponse.arrayBuffer();
-        const picksWorkbook = XLSX.read(picksData, { type: 'array' });
+    // Load the participants' picks
+    const picksResponse = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
+    const picksData = await picksResponse.arrayBuffer();
+    const picksWorkbook = XLSX.read(picksData, { type: 'array' });
 
-        const standings = {};
+    const standings = {};
 
-        picksWorkbook.SheetNames.forEach(sheetName => {
-            if (sheetName === 'ALL_ENTRIES') return; // Skip the "ALL_ENTRIES" sheet
+    picksWorkbook.SheetNames.forEach(sheetName => {
+        if (sheetName === 'ALL_ENTRIES') return; // Skip the "ALL_ENTRIES" sheet
 
-            const sheet = picksWorkbook.Sheets[sheetName];
-            const picks = XLSX.utils.sheet_to_json(sheet);
+        const sheet = picksWorkbook.Sheets[sheetName];
+        const picks = XLSX.utils.sheet_to_json(sheet);
 
-            let totalPoints = 0;
-            let possiblePointsRemaining = 0;
+        let totalPoints = 0;
+        let possiblePointsRemaining = 0;
 
-            picks.forEach(pick => {
-                // Ensure the pick has valid entries
-                if (pick['Event'] && pick['Winner'] && pick['2nd Place'] && pick['3rd Place']) {
-                    const result = results.find(r => r['Event'] === pick['Event']);
-                    if (result) {
-                        let points = 0;
-                        if (result['Winner'] === pick['Winner']) points += 10;
-                        if (result['2nd Place'] === pick['2nd Place']) points += 6;
-                        if (result['3rd Place'] === pick['3rd Place']) points += 4;
-                        if (points === 20) points += 5; // Bonus for all correct
-                        totalPoints += points;
-                    } else {
-                        // Count possible points for not-entered (yellow) picks
-                        possiblePointsRemaining += 10 + 6 + 4 + 5; // 25 points max per event
-                    }
+        picks.forEach(pick => {
+            // Ensure the pick has valid entries
+            if (pick['Event'] && pick['Winner'] && pick['2nd Place'] && pick['3rd Place']) {
+                const result = results.find(r => r['Event'] === pick['Event']);
+                let points = 0;
+
+                if (result) {
+                    if (result['Winner'] === pick['Winner']) points += 10;
+                    if (result['2nd Place'] === pick['2nd Place']) points += 6;
+                    if (result['3rd Place'] === pick['3rd Place']) points += 4;
+                    if (points === 20) points += 5; // Bonus for all correct
+                    totalPoints += points;
+                } else {
+                    // If the event hasn't been completed, count the maximum possible points
+                    possiblePointsRemaining += 10 + 6 + 4 + 5; // 25 points max per event
                 }
-            });
-
-            standings[sheetName] = {
-                totalPoints: totalPoints,
-                possiblePointsRemaining: possiblePointsRemaining
-            };
+            }
         });
 
-        displayStandings(standings);
-    }
+        standings[sheetName] = {
+            totalPoints: totalPoints,
+            possiblePointsRemaining: possiblePointsRemaining
+        };
+    });
+
+    displayStandings(standings);
+}
 
     function displayStandings(standings) {
         const standingsContainer = document.getElementById('standingsContainer');
