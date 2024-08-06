@@ -5,12 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Olympics Pool 2024</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        html, body {
+            height: 100%;
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif;
             background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
             text-align: center; /* Center text by default, can be overridden */
+        }
+
+        .wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         header {
@@ -37,9 +46,11 @@
             text-align: center;
         }
 
-        section {
+        .content {
+            flex: 1;
             padding: 20px;
             display: none;
+            text-align: center;
         }
 
         h1 {
@@ -125,7 +136,6 @@
 
         footer {
             text-align: center;
-            margin-top: 40px;
             padding: 10px;
             background-color: #333;
             color: white;
@@ -153,6 +163,7 @@
             padding: 8px;
             border: 1px solid #ddd;
         }
+        
 
         /* Media query for smaller screens */
         @media (max-width: 600px) {
@@ -194,12 +205,11 @@
                 margin-top: 0;
             }
         }
-
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 </head>
 <body>
-    
+
     <header>
         <div class="brand">SCRC Pool</div>
         <select id="pageSelector">
@@ -210,77 +220,76 @@
         </select>
     </header>
 
-    <section id="home">
-        <h2>Welcome to the 2024 Summer Olympics Pool</h2>
+    <div class="wrapper">
+        <section id="home" class="content">
+            <h2>Welcome to the 2024 Summer Olympics Pool</h2>
 
-        <div class="clock" id="clock"></div>
-        <!--
-        <h3>Use the menu in the upper right corner to navigate between pages.</h3>
-        -->
-        <div class="race-times-container">
-            <div class="race-times">
-                <h1>Race Schedule</h1>
-                <ul class="event-list">
-                    <li class="event" data-event-date="2024-08-03T15:30:00">
-                        Aug 3 - 100m (W) - 3:20pm
-                    </li>
-                    <li class="event" data-event-date="2024-08-04T16:00:00">
-                        Aug 4 - 100m (M) - 3:50pm
-                    </li>
-                    <li class="event" data-event-date="2024-08-05T16:30:00">
-                        Aug 5 - No scheduled pool events
-                    </li>
-                    <li class="event" data-event-date="2024-08-06T15:50:00">
-                        Aug 6 - 200m (W) - 3:40pm
-                    </li>
-                    <li class="event" data-event-date="2024-08-07T15:30:00">
-                        Aug 7 - 400m (M) - 3:20pm
-                    </li>
-                    <li class="event" data-event-date="2024-08-08T14:40:00">
-                        Aug 8 - 200m (M) - 2:30pm
-                    </li>
-                    <li class="event" data-event-date="2024-08-09T13:40:00">
-                        Aug 9 - 4x100m Relay (W) - 1:30pm
-                    </li>
-                    <li class="event" data-event-date="2024-08-09T13:57:00">
-                        Aug 9 - 4x100m Relay (M) - 1:47pm
-                    </li>
-                    <li class="event" data-event-date="2024-08-09T14:10:00">
-                        Aug 9 - 400m (W) - 2:00pm
-                    </li>
-                </ul>
+            <div class="clock" id="clock"></div>
+            <div class="race-times-container">
+                <div class="race-times">
+                    <h1>Race Schedule</h1>
+                    <ul class="event-list">
+                        <li class="event" data-event-date="2024-08-03T15:30:00">
+                            Aug 3 - 100m (W) - 3:20pm
+                        </li>
+                        <li class="event" data-event-date="2024-08-04T16:00:00">
+                            Aug 4 - 100m (M) - 3:50pm
+                        </li>
+                        <li class="event" data-event-date="2024-08-05T16:30:00">
+                            Aug 5 - No scheduled pool events
+                        </li>
+                        <li class="event" data-event-date="2024-08-06T15:50:00">
+                            Aug 6 - 200m (W) - 3:40pm
+                        </li>
+                        <li class="event" data-event-date="2024-08-07T15:30:00">
+                            Aug 7 - 400m (M) - 3:20pm
+                        </li>
+                        <li class="event" data-event-date="2024-08-08T14:40:00">
+                            Aug 8 - 200m (M) - 2:30pm
+                        </li>
+                        <li class="event" data-event-date="2024-08-09T13:40:00">
+                            Aug 9 - 4x100m Relay (W) - 1:30pm
+                        </li>
+                        <li class="event" data-event-date="2024-08-09T13:57:00">
+                            Aug 9 - 4x100m Relay (M) - 1:47pm
+                        </li>
+                        <li class="event" data-event-date="2024-08-09T14:10:00">
+                            Aug 9 - 400m (W) - 2:00pm
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="picks">
-        <h1>Participants' Picks</h1>
-        <h3>Colour Codes</h3>
-        <p>Yellow: event still to come</p>
-        <p>Red: incorrect pick(s)</p>
-        <p>Green: correct pick(s)</p>
-        <div id="picksContainer"></div>
-    </section>
+        <section id="picks" class="content">
+            <h1>Participants' Picks</h1>
+            <h3>Colour Codes</h3>
+            <p>Yellow: event still to come</p>
+            <p>Red: incorrect pick(s)</p>
+            <p>Green: correct pick(s)</p>
+            <div id="picksContainer"></div>
+        </section>
 
-    <section id="standings">
-        <h1>Standings</h1>
-        <div id="standingsContainer"></div>
-    </section>
+        <section id="standings" class="content">
+            <h1>Standings</h1>
+            <div id="standingsContainer"></div>
+        </section>
 
-    <section id="results">
-        <h1>Event Results</h1>
-        <div id="resultsContainer"></div>
-    </section>
+        <section id="results" class="content">
+            <h1>Event Results</h1>
+            <div id="resultsContainer"></div>
+        </section>
+    </div>
 
     <footer>
-        &copy; PulseDynamics
+        &copy; PulseDynamics (v1.0.1)
     </footer>
 
     <script>
         // Function to show the corresponding section when a selection is made
         document.getElementById('pageSelector').addEventListener('change', function() {
             const selectedPage = this.value;
-            document.querySelectorAll('section').forEach(section => {
+            document.querySelectorAll('.content').forEach(section => {
                 section.style.display = 'none';
             });
             document.querySelector(selectedPage).style.display = 'block';
