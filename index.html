@@ -235,6 +235,9 @@
                         <li class="event" data-event-date="2024-08-04T16:00:00">
                             Aug 4 - 100m (M) - 3:50pm
                         </li>
+                        <li class="event" data-event-date="2024-08-05T16:30:00">
+                            Aug 5 - No scheduled pool events
+                        </li>
                         <li class="event" data-event-date="2024-08-06T15:50:00">
                             Aug 6 - 200m (W) - 3:40pm
                         </li>
@@ -369,100 +372,83 @@
         }
 
         // Function to calculate standings
-      async function calculateStandings() {
-    // Load the event results
-    const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
-    const data = await response.arrayBuffer();
-    const resultsWorkbook = XLSX.read(data, { type: 'array' });
-    const resultsSheet = resultsWorkbook.Sheets[resultsWorkbook.SheetNames[0]];
-    const results = XLSX.utils.sheet_to_json(resultsSheet);
+        async function calculateStandings() {
+            // Load the event results
+            const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
+            const data = await response.arrayBuffer();
+            const resultsWorkbook = XLSX.read(data, { type: 'array' });
+            const resultsSheet = resultsWorkbook.Sheets[resultsWorkbook.SheetNames[0]];
+            const results = XLSX.utils.sheet_to_json(resultsSheet);
 
-    // Load the participants' picks
-    const picksResponse = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
-    const picksData = await response.arrayBuffer();
-    const picksWorkbook = XLSX.read(picksData, { type: 'array' });
+            // Load the participants' picks
+            const picksResponse = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
+            const picksData = await picksResponse.arrayBuffer();
+            const picksWorkbook = XLSX.read(picksData, { type: 'array' });
 
-    const standings = {};
-    const totalPossiblePoints = 200; // Set total possible points to 200
+            const standings = {};
 
-    picksWorkbook.SheetNames.forEach(sheetName => {
-        if (sheetName === 'ALL_ENTRIES') return; // Skip the "ALL_ENTRIES" sheet
+            picksWorkbook.SheetNames.forEach(sheetName => {
+                if (sheetName === 'ALL_ENTRIES') return; // Skip the "ALL_ENTRIES" sheet
 
-        const sheet = picksWorkbook.Sheets[sheetName];
-        const picks = XLSX.utils.sheet_to_json(sheet);
+                const sheet = picksWorkbook.Sheets[sheetName];
+                const picks = XLSX.utils.sheet_to_json(sheet);
 
-        let totalPoints = 0;
-        let pointsLost = 0;
+                let totalPoints = 0;
 
-        picks.forEach(pick => {
-            if (pick['Event'] && pick['Winner'] && pick['2nd Place'] && pick['3rd Place']) {
-                const result = results.find(r => r['Event'] === pick['Event']);
-                let points = 0;
+                picks.forEach(pick => {
+                    // Ensure the pick has valid entries
+                    if (pick['Event'] && pick['Winner'] && pick['2nd Place'] && pick['3rd Place']) {
+                        const result = results.find(r => r['Event'] === pick['Event']);
+                        if (result) {
+                            let points = 0;
+                            if (result['Winner'] === pick['Winner']) points += 10;
+                            if (result['2nd Place'] === pick['2nd Place']) points += 6;
+                            if (result['3rd Place'] === pick['3rd Place']) points += 4;
+                            if (points === 20) points += 5; // Bonus for all correct
+                            totalPoints += points;
+                        }
+                    }
+                });
 
-                if (result) {
-                    if (result['Winner'] === pick['Winner']) points += 10;
-                    if (result['2nd Place'] === pick['2nd Place']) points += 6;
-                    if (result['3rd Place'] === pick['3rd Place']) points += 4;
-                    if (points === 20) points += 5; // Bonus for all correct
-                    totalPoints += points;
+                standings[sheetName] = totalPoints;
+            });
 
-                    // Calculate points lost for incorrect picks
-                    if (result['Winner'] !== pick['Winner']) pointsLost += 10;
-                    if (result['2nd Place'] !== pick['2nd Place']) pointsLost += 6;
-                    if (result['3rd Place'] !== pick['3rd Place']) pointsLost += 4;
-                } else {
-                    // Consider the pick as potentially correct if the event hasn't occurred yet
-                }
-            }
-        });
+            displayStandings(standings);
+        }
 
-        const possiblePointsRemaining = totalPossiblePoints - totalPoints - pointsLost;
+        function displayStandings(standings) {
+            const standingsContainer = document.getElementById('standingsContainer');
+            standingsContainer.innerHTML = ''; // Clear previous content
 
-        standings[sheetName] = {
-            totalPoints: totalPoints,
-            possiblePointsRemaining: possiblePointsRemaining
-        };
-    });
+            // Convert standings object to array and sort by points (descending order)
+            const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
 
-    displayStandings(standings);
-}
+            // Create a table for the standings
+            const table = document.createElement('table');
+            table.className = 'standings-table';
+            table.border = 1;
+            table.style.margin = 'auto'; // Center the table
+            const header = table.createTHead();
+            const headerRow = header.insertRow();
+            ['Participant', 'Current Points'].forEach(text => {
+                const th = document.createElement('th');
+                th.textContent = text;
+                headerRow.appendChild(th);
+            });
 
+            const tbody = table.createTBody();
 
-    function displayStandings(standings) {
-        const standingsContainer = document.getElementById('standingsContainer');
-        standingsContainer.innerHTML = ''; // Clear previous content
+            sortedStandings.forEach(([participant, points]) => {
+                const tr = tbody.insertRow();
+                const nameCell = tr.insertCell();
+                const pointsCell = tr.insertCell();
 
-        // Convert standings object to array and sort by points (descending order)
-        const sortedStandings = Object.entries(standings).sort(([, a], [, b]) => b.totalPoints - a.totalPoints);
+                nameCell.textContent = participant;
+                pointsCell.textContent = points;
+            });
 
-        // Create a table for the standings
-        const table = document.createElement('table');
-        table.className = 'standings-table';
-        table.border = 1;
-        table.style.margin = 'auto'; // Center the table
-        const header = table.createTHead();
-        const headerRow = header.insertRow();
-        ['Participant', 'Current Points', 'Possible Points Remaining'].forEach(text => {
-            const th = document.createElement('th');
-            th.textContent = text;
-            headerRow.appendChild(th);
-        });
-
-        const tbody = table.createTBody();
-
-        sortedStandings.forEach(([participant, points]) => {
-            const tr = tbody.insertRow();
-            const nameCell = tr.insertCell();
-            const pointsCell = tr.insertCell();
-            const possiblePointsCell = tr.insertCell();
-
-            nameCell.textContent = participant;
-            pointsCell.textContent = points.totalPoints;
-            possiblePointsCell.textContent = points.possiblePointsRemaining;
-        });
-
-        standingsContainer.appendChild(table);
-    }
+            standingsContainer.appendChild(table);
+        }
 
         // Function to load and display results on the Results page
         async function loadResults() {
