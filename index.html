@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
-            text-align: center; /* Center text in the body */
+            text-align: center; /* Center text by default, can be overridden */
         }
 
         header {
@@ -19,13 +19,13 @@
             padding: 5px;
             display: flex;
             align-items: center;
-            justify-content: center; /* Center header content */
         }
 
         header .brand {
             flex-grow: 1;
             font-size: 18px;
-            text-align: center; /* Center header brand */
+            text-align: left; /* Left-align header brand */
+            padding-left: 10px; /* Add padding for some space */
         }
 
         header select {
@@ -34,26 +34,25 @@
             border: none;
             border-radius: 5px;
             margin-left: auto;
-            margin-right: auto;
             text-align: center;
         }
 
         section {
             padding: 20px;
             display: none;
-            text-align: center; /* Center text in sections */
         }
 
         h1 {
-            text-align: center;
+            text-align: center; /* Left-align section titles */
             margin-bottom: 20px;
+            padding-left: 10px; /* Add padding for some space */
         }
 
         .event-list {
             list-style-type: none;
             padding: 0;
             margin: 0;
-            text-align: center; /* Center text in the event list */
+            text-align: center;
         }
 
         .event-list li {
@@ -63,13 +62,13 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
-            text-align: center; /* Center text in list items */
+            text-align: center;
         }
 
         .event-list li.completed {
             color: red;
             position: relative;
-            text-align: center; /* Center text for completed items */
+            text-align: center;
         }
 
         .event-list li.completed .completed-text {
@@ -78,7 +77,7 @@
             display: block;
             margin-top: 5px;
             color: green;
-            text-align: center; /* Center text for completed status */
+            text-align: center;
         }
 
         .event-list li:hover {
@@ -92,17 +91,17 @@
 
         .correct {
             background-color: lightgreen;
-            text-align: center; /* Center text for correct picks */
+            text-align: center;
         }
 
         .incorrect {
             background-color: lightcoral;
-            text-align: center; /* Center text for incorrect picks */
+            text-align: center;
         }
 
         .not-entered {
             background-color: lightyellow;
-            text-align: center; /* Center text for not-entered picks */
+            text-align: center;
         }
 
         .clock {
@@ -119,9 +118,9 @@
 
         .race-times {
             margin-top: 20px;
-            text-align: center; /* Center text in race times */
+            text-align: left; /* Left-align race times */
             width: 100%;
-            max-width: 800px; /* Limits max-width on larger screens */
+            max-width: 800px;
         }
 
         footer {
@@ -133,24 +132,26 @@
         }
 
         #resultsContainer, #standingsContainer {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Align items at the start to avoid large gaps */
-    min-height: 100vh; /* Ensure the container takes up at least the full viewport height */
-    padding-top: 20px; /* Add some padding to create a smaller, consistent gap */
-}
-#resultsContainer table, #standingsContainer table {
-    border-collapse: collapse; /* Ensure borders are collapsed */
-    margin-top: 0; /* Remove the large negative margin */
-    width: 100%; /* Optional: Make the table take full width */
-    max-width: 800px; /* Optional: Limit max width for readability */
-}
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: auto;
+            padding-top: 20px;
+            margin-top: 0; /* Remove margin top */
+        }
+
+        #resultsContainer table, #standingsContainer table {
+            border-collapse: collapse;
+            margin-top: 0;
+            width: 100%;
+            max-width: 800px;
+        }
 
         #resultsContainer th, #resultsContainer td, 
         #standingsContainer th, #standingsContainer td {
-            text-align: center; /* Center text in table cells */
-            padding: 8px; /* Add some padding for better spacing */
-            border: 1px solid #ddd; /* Add border for table cells */
+            text-align: center;
+            padding: 8px;
+            border: 1px solid #ddd;
         }
 
         /* Media query for smaller screens */
@@ -172,6 +173,7 @@
 
             h1 {
                 font-size: 1.2em;
+                text-align: left;
             }
 
             .clock {
@@ -197,7 +199,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 </head>
 <body>
-
+    
     <header>
         <div class="brand">SCRC Pool</div>
         <select id="pageSelector">
@@ -212,7 +214,9 @@
         <h2>Welcome to the 2024 Summer Olympics Pool</h2>
 
         <div class="clock" id="clock"></div>
-
+        <!--
+        <h3>Use the menu in the upper right corner to navigate between pages.</h3>
+        -->
         <div class="race-times-container">
             <div class="race-times">
                 <h1>Race Schedule</h1>
