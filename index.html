@@ -369,8 +369,7 @@
         }
 
         // Function to calculate standings
-       // Function to calculate standings
-   async function calculateStandings() {
+      async function calculateStandings() {
     // Load the event results
     const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
     const data = await response.arrayBuffer();
@@ -380,10 +379,11 @@
 
     // Load the participants' picks
     const picksResponse = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
-    const picksData = await picksResponse.arrayBuffer();
+    const picksData = await response.arrayBuffer();
     const picksWorkbook = XLSX.read(picksData, { type: 'array' });
 
     const standings = {};
+    const totalPossiblePoints = 200; // Set total possible points to 200
 
     picksWorkbook.SheetNames.forEach(sheetName => {
         if (sheetName === 'ALL_ENTRIES') return; // Skip the "ALL_ENTRIES" sheet
@@ -392,10 +392,9 @@
         const picks = XLSX.utils.sheet_to_json(sheet);
 
         let totalPoints = 0;
-        let possiblePointsRemaining = 0;
+        let pointsLost = 0;
 
         picks.forEach(pick => {
-            // Ensure the pick has valid entries
             if (pick['Event'] && pick['Winner'] && pick['2nd Place'] && pick['3rd Place']) {
                 const result = results.find(r => r['Event'] === pick['Event']);
                 let points = 0;
@@ -406,12 +405,18 @@
                     if (result['3rd Place'] === pick['3rd Place']) points += 4;
                     if (points === 20) points += 5; // Bonus for all correct
                     totalPoints += points;
+
+                    // Calculate points lost for incorrect picks
+                    if (result['Winner'] !== pick['Winner']) pointsLost += 10;
+                    if (result['2nd Place'] !== pick['2nd Place']) pointsLost += 6;
+                    if (result['3rd Place'] !== pick['3rd Place']) pointsLost += 4;
                 } else {
-                    // If the event hasn't been completed, count the maximum possible points
-                    possiblePointsRemaining += 10 + 6 + 4 + 5; // 25 points max per event
+                    // Consider the pick as potentially correct if the event hasn't occurred yet
                 }
             }
         });
+
+        const possiblePointsRemaining = totalPossiblePoints - totalPoints - pointsLost;
 
         standings[sheetName] = {
             totalPoints: totalPoints,
@@ -421,6 +426,7 @@
 
     displayStandings(standings);
 }
+
 
     function displayStandings(standings) {
         const standingsContainer = document.getElementById('standingsContainer');
