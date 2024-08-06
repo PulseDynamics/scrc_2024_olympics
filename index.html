@@ -10,19 +10,22 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+            text-align: center; /* Center text in the body */
         }
 
         header {
             background-color: #333;
             color: white;
-            padding: 10px;
+            padding: 5px;
             display: flex;
             align-items: center;
+            justify-content: center; /* Center header content */
         }
 
         header .brand {
             flex-grow: 1;
             font-size: 18px;
+            text-align: center; /* Center header brand */
         }
 
         header select {
@@ -30,23 +33,27 @@
             padding: 5px;
             border: none;
             border-radius: 5px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
         }
 
         section {
             padding: 20px;
             display: none;
+            text-align: center; /* Center text in sections */
         }
 
         h1 {
             text-align: center;
             margin-bottom: 20px;
-            font-size: 1.5em; /* Smaller title font size */
         }
 
         .event-list {
             list-style-type: none;
             padding: 0;
             margin: 0;
+            text-align: center; /* Center text in the event list */
         }
 
         .event-list li {
@@ -56,11 +63,13 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
+            text-align: center; /* Center text in list items */
         }
 
         .event-list li.completed {
             color: red;
             position: relative;
+            text-align: center; /* Center text for completed items */
         }
 
         .event-list li.completed .completed-text {
@@ -69,6 +78,7 @@
             display: block;
             margin-top: 5px;
             color: green;
+            text-align: center; /* Center text for completed status */
         }
 
         .event-list li:hover {
@@ -82,14 +92,17 @@
 
         .correct {
             background-color: lightgreen;
+            text-align: center; /* Center text for correct picks */
         }
 
         .incorrect {
             background-color: lightcoral;
+            text-align: center; /* Center text for incorrect picks */
         }
 
         .not-entered {
             background-color: lightyellow;
+            text-align: center; /* Center text for not-entered picks */
         }
 
         .clock {
@@ -106,7 +119,7 @@
 
         .race-times {
             margin-top: 20px;
-            text-align: left;
+            text-align: center; /* Center text in race times */
             width: 100%;
             max-width: 800px; /* Limits max-width on larger screens */
         }
@@ -120,16 +133,18 @@
         }
 
         #resultsContainer, #standingsContainer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Full viewport height */
-        }
-
-        #resultsContainer table, #standingsContainer table {
-            margin-top: -20vh; /* Adjust vertically to center */
-            border-collapse: collapse; /* Ensure borders are collapsed */
-        }
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items at the start to avoid large gaps */
+    min-height: 100vh; /* Ensure the container takes up at least the full viewport height */
+    padding-top: 20px; /* Add some padding to create a smaller, consistent gap */
+}
+#resultsContainer table, #standingsContainer table {
+    border-collapse: collapse; /* Ensure borders are collapsed */
+    margin-top: 0; /* Remove the large negative margin */
+    width: 100%; /* Optional: Make the table take full width */
+    max-width: 800px; /* Optional: Limit max width for readability */
+}
 
         #resultsContainer th, #resultsContainer td, 
         #standingsContainer th, #standingsContainer td {
@@ -303,6 +318,7 @@
                 // Create a table for each participant
                 const table = document.createElement('table');
                 table.border = 1;
+                table.style.margin = 'auto'; // Center the table
                 const header = table.createTHead();
                 const headerRow = header.insertRow();
                 ['Event', 'Winner', '2nd Place', '3rd Place'].forEach(text => {
@@ -398,7 +414,7 @@
             const table = document.createElement('table');
             table.className = 'standings-table';
             table.border = 1;
-
+            table.style.margin = 'auto'; // Center the table
             const header = table.createTHead();
             const headerRow = header.insertRow();
             ['Participant', 'Current Points'].forEach(text => {
@@ -435,6 +451,7 @@
             // Create a table for the results
             const table = document.createElement('table');
             table.border = 1;
+            table.style.margin = 'auto'; // Center the table
             const header = table.createTHead();
             const headerRow = header.insertRow();
             ['Event', 'Winner', '2nd Place', '3rd Place'].forEach(text => {
