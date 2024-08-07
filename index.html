@@ -470,42 +470,35 @@
 
             standingsContainer.appendChild(table);
         }
+        // Function to load and process results for color coding and standings, without displaying the table
+async function loadResults() {
+    const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
+    const data = await response.arrayBuffer();
+    const workbook = XLSX.read(data, { type: 'array' });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const json = XLSX.utils.sheet_to_json(sheet);
 
-        // Function to load and display results on the Results page
-        async function loadResults() {
-            const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
-            const data = await response.arrayBuffer();
-            const workbook = XLSX.read(data, { type: 'array' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const json = XLSX.utils.sheet_to_json(sheet);
+    // Process the results data without displaying it on the page
+    // You can use the 'json' data for further processing like color coding or standings calculations
+}
 
-            const resultsContainer = document.getElementById('resultsContainer');
-            resultsContainer.innerHTML = ''; // Clear previous content
+// Ensure this function is called where appropriate
+document.getElementById('pageSelector').addEventListener('change', function() {
+    const selectedPage = this.value;
+    document.querySelectorAll('.content').forEach(section => {
+        section.style.display = 'none';
+    });
+    document.querySelector(selectedPage).style.display = 'block';
 
-            // Create a table for the results
-            const table = document.createElement('table');
-            table.border = 1;
-            table.style.margin = 'auto'; // Center the table
-            const header = table.createTHead();
-            const headerRow = header.insertRow();
-            ['Event', 'Winner', '2nd Place', '3rd Place'].forEach(text => {
-                const th = document.createElement('th');
-                th.textContent = text;
-                headerRow.appendChild(th);
-            });
+    if (selectedPage === '#picks') {
+        loadPicks();
+    } else if (selectedPage === '#standings') {
+        calculateStandings();
+    } else if (selectedPage === '#results') {
+        loadResults();  // Still load results for processing but don't display
+    }
+});
 
-            const tbody = table.createTBody();
-            json.forEach(row => {
-                const tr = tbody.insertRow();
-                ['Event', 'Winner', '2nd Place', '3rd Place'].forEach(key => {
-                    const td = tr.insertCell();
-                    td.textContent = row[key] || '*';
-                    td.style.textAlign = "center"; // Center text in cells
-                });
-            });
-
-            resultsContainer.appendChild(table);
-        }
 
         // Live clock function for 12-hour format with AM/PM
         function updateClock() {
