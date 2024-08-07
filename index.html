@@ -1,27 +1,1245 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Results Processing</title>
+
+    <title>Olympics Pool 2024</title>
+
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+
+        html, body {
+
+            height: 100%;
+
             margin: 0;
+
+            padding: 0;
+
             font-family: Arial, sans-serif;
+
             background-color: #f4f4f4;
-            color: #333;
+
+            display: flex;
+
+            flex-direction: column;
+
             text-align: center;
+
         }
+
+ 
+
+        .correct {
+
+            background-color: lightgreen;
+
+            color: black;
+
+        }
+
+ 
+
+        .incorrect {
+
+            background-color: lightcoral;
+
+            color: black;
+
+        }
+
+ 
+
+        .not-entered {
+
+            background-color: lightyellow;
+
+            color: black;
+
+        }
+
+ 
+
+        .wrapper {
+
+            flex: 1;
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+ 
+
+        header {
+
+            background-color: #333;
+
+            color: white;
+
+            padding: 5px;
+
+            display: flex;
+
+            align-items: center;
+
+        }
+
+ 
+
+        header .brand {
+
+            flex-grow: 1;
+
+            font-size: 18px;
+
+            text-align: left;
+
+            padding-left: 10px;
+
+        }
+
+ 
+
+        header select {
+
+            font-size: 16px;
+
+            padding: 5px;
+
+            border: none;
+
+            border-radius: 5px;
+
+            margin-left: auto;
+
+            text-align: center;
+
+        }
+
+ 
+
+        .content {
+
+            flex: 1;
+
+            padding: 20px;
+
+            display: none;
+
+            text-align: center;
+
+        }
+
+ 
+
+        h1 {
+
+            text-align: center;
+
+            margin-bottom: 20px;
+
+            padding-left: 10px;
+
+        }
+
+ 
+
+        .event-list {
+
+            list-style-type: none;
+
+            padding: 0;
+
+            margin: 0;
+
+            text-align: center;
+
+        }
+
+ 
+
+        .event-list li {
+
+            background-color: #fff;
+
+            padding: 10px;
+
+            margin-bottom: 10px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 5px;
+
+            font-size: 16px;
+
+            text-align: center;
+
+            position: relative;
+
+            cursor: pointer;
+
+        }
+
+ 
+
+        .event-list li.completed {
+
+            color: red;
+
+            position: relative;
+
+            text-align: center;
+
+        }
+
+ 
+
+        .event-list li.completed .completed-text {
+
+            font-weight: bold;
+
+            text-decoration: none;
+
+            display: block;
+
+            margin-top: 5px;
+
+            color: green;
+
+            text-align: center;
+
+        }
+
+ 
+
+        .event-list li:hover {
+
+            background-color: #f1f1f1;
+
+        }
+
+ 
+
+        /* Popup styling */
+
+        .popup {
+
+            display: none;
+
+            position: fixed;
+
+            left: 50%;
+
+            top: 50%;
+
+            transform: translate(-50%, -50%);
+
+            background-color: #333;
+
+            color: white;
+
+            border-radius: 5px;
+
+            padding: 20px;
+
+            width: 300px;
+
+            z-index: 1000;
+
+            text-align: left;
+
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+
+        }
+
+ 
+
+        .event-list li:hover .popup {
+
+            display: block;
+
+        }
+
+ 
+
+        footer {
+
+            text-align: center;
+
+            padding: 10px;
+
+            background-color: #333;
+
+            color: white;
+
+        }
+
+ 
+
+        #resultsContainer, #standingsContainer {
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: flex-start;
+
+            min-height: auto;
+
+            padding-top: 20px;
+
+            margin-top: 0;
+
+        }
+
+ 
+
+        #resultsContainer table, #standingsContainer table {
+
+            border-collapse: collapse;
+
+            margin-top: 0;
+
+            width: 100%;
+
+            max-width: 800px;
+
+        }
+
+ 
+
+        #resultsContainer th, #resultsContainer td,
+
+        #standingsContainer th, #standingsContainer td {
+
+            text-align: center;
+
+            padding: 8px;
+
+            border: 1px solid #ddd;
+
+        }
+
+ 
+
+        /* Media query for smaller screens */
+
+        @media (max-width: 600px) {
+
+            th, td {
+
+                padding: 5px;
+
+                font-size: 12px;
+
+            }
+
+ 
+
+            .race-times-container {
+
+                flex-direction: column;
+
+                align-items: center;
+
+            }
+
+ 
+
+            header select {
+
+                font-size: 14px;
+
+                padding: 4px;
+
+            }
+
+ 
+
+            h1 {
+
+                font-size: 1.2em;
+
+                text-align: center;
+
+            }
+
+ 
+
+            .clock {
+
+                font-size: 14px;
+
+            }
+
+ 
+
+            .event-list li {
+
+                padding: 8px;
+
+                font-size: 14px;
+
+            }
+
+ 
+
+            #resultsContainer, #standingsContainer {
+
+                height: auto;
+
+                margin-top: 20px;
+
+            }
+
+ 
+
+            #resultsContainer table, #standingsContainer table {
+
+                margin-top: 0;
+
+            }
+
+        }
+
     </style>
+
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js></script>
+
 </head>
+
 <body>
-    <div>
-        <h1>RESULTS PROCESSING</h1>
-        <p>WEBSITE BACK 4:20PM AUGUST 7TH</p>
+
+ 
+
+    <header>
+
+        <div class="brand">SCRC Olympics Pool</div>
+
+        <select id="pageSelector">
+
+            <option value="#home">Home</option>
+
+            <option value="#picks">Picks</option>
+
+            <option value="#standings">Standings</option>
+
+            <option value="#results">Results</option>
+
+        </select>
+
+    </header>
+
+ 
+
+    <div class="wrapper">
+
+        <section id="home" class="content">
+
+            <h2>Welcome to the 2024 Summer Olympics Pool</h2>
+
+ 
+
+            <div class="clock" id="clock"></div>
+
+            <div class="race-times-container">
+
+                <div class="race-times">
+
+                    <h1>Race Schedule</h1>
+
+                    <p>Click on the upcoming events for startlists!<br>Completed events are viewable on the 'Results' page!</p>
+
+                    <ul class="event-list">
+
+                        <li class="event" data-event-date="2024-08-03T15:30:00">
+
+                            Aug 3 - 100m (W) - 3:20pm
+
+                        </li>
+
+                        <li class="event" data-event-date="2024-08-04T16:00:00">
+
+                            Aug 4 - 100m (M) - 3:50pm
+
+                        </li>
+
+                        <li class="event" data-event-date="2024-08-06T15:50:00">
+
+                            Aug 6 - 200m (W) - 3:40pm
+
+                        </li>
+
+                        <li class="event" data-event-date="2024-08-07T15:30:00">
+
+                            Aug 7 - 400m (M) - 3:20pm
+
+                            <div class="popup">
+
+                                <p>Startlist:</p>
+
+                                <p>Lane 2: C. Bailey (USA) - 44.31</p>
+
+                                <p>Lane 3: S. Ogazi (NGA) - 44.41</p>
+
+                                <p>Lane 4: M. Norman (USA) - 44.26</p>
+
+                                <p>Lane 5: K. James (GRN) - 43.78</p>
+
+                                <p>Lane 6: M. Hudson-Smith (GBR) - 44.07</p>
+
+                                <p>Lane 7: M. Samukonga (ZAM) - 43.81</p>
+
+                                <p>Lane 8: Q. Hall (USA)- 43.95</p>
+
+                                <p>Lane 9: J. Richards (TTO) - 44.33</p>
+
+                                <p><br>Results will be posted on the results page!</p>
+
+                            </div>
+
+                        </li>
+
+                        <li class="event" data-event-date="2024-08-08T14:40:00">
+
+                            Aug 8 - 200m (M) - 2:30pm
+
+                            <div class="popup">
+
+                                <p>Startlist:</p>
+
+                                <p>Lane 2: *</p>
+
+                                <p>Lane 3: *</p>
+
+                                <p>Lane 4: *</p>
+
+                                <p>Lane 5: *</p>
+
+                                <p>Lane 6: *</p>
+
+                                <p>Lane 7: *</p>
+
+                                <p>Lane 8: *</p>
+
+                                <p>Lane 9: *</p>
+
+                                <p><br>Results will be posted on the results page!</p>
+
+                            </div>
+
+                        </li>
+
+                        <li class="event" data-event-date="2024-08-09T13:40:00">
+
+                            Aug 9 - 4x100m Relay (W) - 1:30pm
+
+                            <div class="popup">
+
+                                <p>Startlist:<br><br>9:00am August 8th!</p>
+
+                            </div>
+
+                        </li>
+
+                        <li class="event" data-event-date="2024-08-09T13:57:00">
+
+                            Aug 9 - 4x100m Relay (M) - 1:47pm
+
+                            <div class="popup">
+
+                                <p>Startlist:<br><br>9:00am August 8th!</p>
+
+                            </div>
+
+                        </li>
+
+                        <li class="event" data-event-date="2024-08-09T14:10:00">
+
+                            Aug 9 - 400m (W) - 2:00pm
+
+                            <div class="popup">
+
+                                <p>Startlist:<br><br>4:00pm August 7th!</p>
+
+                            </div>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <h3>Winner will be announced at 2:30pm August 9th!</h3>
+
+        </section>
+
+ 
+
+        <section id="picks" class="content">
+
+            <h1>Participants' Picks</h1>
+
+            <h3>Colour Codes</h3>
+
+            <p>Yellow: event still to come</p>
+
+            <p>Red: incorrect pick(s)</p>
+
+            <p>Green: correct pick(s)</p>
+
+            <div id="picksContainer"></div>
+
+        </section>
+
+ 
+
+        <section id="standings" class="content">
+
+            <h1>Standings</h1>
+
+            <div id="standingsContainer"></div>
+
+        </section>
+
+ 
+
+        <section id="results" class="content">
+
+            <h1>Event Results</h1>
+
+        <ul style="list-style-type: none; padding: 0;">
+
+            <li style="padding: 10px; border: 1px solid #ddd; margin-bottom: 10px; background-color: #fff; border-radius: 5px;">
+
+                <strong>100m (W)</strong><br><br>
+
+                Gold: Julien Alfred (LCA) - 10.72<br><br>
+
+                Silver: Sha'Carri Richardson (USA) - 10.87<br><br>
+
+                Bronze: Melissa Jefferson (USA) - 10.92<br><br><br>
+
+                4th: Daryll Neita (GBR) - 10.96<br><br>
+
+                5th: Twanisha Terry (USA) - 10.97<br><br>
+
+                6th: Mujinga Kambundji (SUI) - 10.99<br><br>
+
+                7th: Tia Clayton (JAM) - 11.04<br><br>
+
+                8th: Marie-Josee Ta Lou-Smith (CIV) - 13.84
+
+            </li>
+
+            <li style="padding: 10px; border: 1px solid #ddd; margin-bottom: 10px; background-color: #fff; border-radius: 5px;">
+
+                <strong>100m (M)</strong><br><br>
+
+                Gold: Noah Lyles (USA) - 9.79<br><br>
+
+                Silver: Kishane Thompson (JAM) - 9.79<br><br>
+
+                Bronze: Fred Kerley (USA) - 9.81<br><br><br>
+
+                4th: Akani Simbine (RSA) - 9.82<br><br>
+
+                5th: Lamont Marcell Jacobs (ITA) - 9.85<br><br>
+
+                6th: Letsile Tebogo (BOT) - 9.86<br><br>
+
+                7th: Kenneth Bednarek (USA) - 9.88<br><br>
+
+                8th: Oblique Seville (JAM) - 9.91
+
+            </li>
+
+            <li style="padding: 10px; border: 1px solid #ddd; margin-bottom: 10px; background-color: #fff; border-radius: 5px;">
+
+                <strong>200m (F)</strong><br><br>
+
+                Gold: Gabrielle Thomas (USA) - 21.83<br><br>
+
+                Silver: Julien Alfred (LCA) - 22.08<br><br>
+
+                Bronze: Brittany Brown (USA) - 22.20<br><br><br>
+
+                4th: Dina Asher-Smith (GBR) - 22.22<br><br>
+
+                5th: Daryll Neita (GBR) - 22.23<br><br>
+
+                6th: Favour Ofili (NGR) - 22.24<br><br>
+
+                7th: Mckenzie Long (USA) - 22.42<br><br>
+
+                8th: Jessika Gbai (CIV) - 22.70
+
+            </li>
+
+            <li style="padding: 10px; border: 1px solid #ddd; margin-bottom: 10px; background-color: #fff; border-radius: 5px;">
+
+                <strong>400m (M)</strong><br><br>
+
+                Gold: *<br><br>
+
+                Silver: *<br><br>
+
+                Bronze: *<br><br>
+
+                4th: *<br><br>
+
+                5th: *<br><br>
+
+                6th: *<br><br>
+
+                7th: *<br><br>
+
+                8th: *
+
+            </li>
+
+            <!-- Add more results here -->
+
+        </ul>
+
     </div>
+
+</section>
+
+ 
+
+            <div id="resultsContainer"></div>
+
+        </section>
+
+    </div>
+
+ 
+
+    <footer>
+
+        &copy; PulseDynamics (v1.1.1)
+
+    </footer>
+
+ 
+
+    <script>
+
+        // Function to show the corresponding section when a selection is made
+
+        document.getElementById('pageSelector').addEventListener('change', function() {
+
+            const selectedPage = this.value;
+
+            document.querySelectorAll('.content').forEach(section => {
+
+                section.style.display = 'none';
+
+            });
+
+            document.querySelector(selectedPage).style.display = 'block';
+
+ 
+
+            if (selectedPage === '#picks') {
+
+                loadPicks();
+
+            } else if (selectedPage === '#standings') {
+
+                calculateStandings();
+
+            } else if (selectedPage === '#results') {
+
+                loadResults();
+
+            }
+
+        });
+
+ 
+
+        // Display the home section by default
+
+        document.querySelector('#home').style.display = 'block';
+
+ 
+
+        // Function to load the participants' picks
+
+        async function loadPicks() {
+
+            const response = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
+
+            const data = await response.arrayBuffer();
+
+            const workbook = XLSX.read(data, { type: 'array' });
+
+ 
+
+            const picksContainer = document.getElementById('picksContainer');
+
+            picksContainer.innerHTML = ''; // Clear previous content
+
+ 
+
+            // Load the event results for comparison
+
+            const resultsResponse = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
+
+            const resultsData = await resultsResponse.arrayBuffer();
+
+            const resultsWorkbook = XLSX.read(resultsData, { type: 'array' });
+
+            const resultsSheet = resultsWorkbook.Sheets[resultsWorkbook.SheetNames[0]];
+
+            const results = XLSX.utils.sheet_to_json(resultsSheet);
+
+ 
+
+            workbook.SheetNames.forEach(sheetName => {
+
+                if (sheetName === 'ALL_ENTRIES') return; // Skip the "ALL_ENTRIES" sheet
+
+ 
+
+                const sheet = workbook.Sheets[sheetName];
+
+                const json = XLSX.utils.sheet_to_json(sheet);
+
+ 
+
+                // Create a table for each participant
+
+                const table = document.createElement('table');
+
+                table.border = 1;
+
+                table.style.margin = 'auto'; // Center the table
+
+                const header = table.createTHead();
+
+                const headerRow = header.insertRow();
+
+                ['Event', 'Winner', '2nd Place', '3rd Place'].forEach(text => {
+
+                    const th = document.createElement('th');
+
+                    th.textContent = text;
+
+                    headerRow.appendChild(th);
+
+                });
+
+ 
+
+                const tbody = table.createTBody();
+
+                json.forEach(row => {
+
+                    const tr = tbody.insertRow();
+
+                    const result = results.find(r => r['Event'] === row['Event']);
+
+ 
+
+                    ['Event', 'Winner', '2nd Place', '3rd Place'].forEach((key, index) => {
+
+                        const td = tr.insertCell();
+
+                        td.textContent = row[key] || '("")';
+
+ 
+
+                        if (index > 0) { // Apply color only for Winner, 2nd Place, and 3rd Place columns
+
+                            if (result && result[key]) {
+
+                                if (result[key] === row[key]) {
+
+                                    td.classList.add('correct');
+
+                                } else {
+
+                                    td.classList.add('incorrect');
+
+                                }
+
+                            } else {
+
+                                td.classList.add('not-entered');
+
+                            }
+
+                        }
+
+                    });
+
+                });
+
+ 
+
+                // Add participant's name as a title above their table
+
+                const title = document.createElement('h2');
+
+                title.textContent = sheetName;
+
+                picksContainer.appendChild(title);
+
+                picksContainer.appendChild(table);
+
+            });
+
+        }
+
+ 
+
+        // Function to calculate standings
+
+        async function calculateStandings() {
+
+            // Load the event results
+
+            const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
+
+            const data = await response.arrayBuffer();
+
+            const resultsWorkbook = XLSX.read(data, { type: 'array' });
+
+            const resultsSheet = resultsWorkbook.Sheets[resultsWorkbook.SheetNames[0]];
+
+            const results = XLSX.utils.sheet_to_json(resultsSheet);
+
+ 
+
+            // Load the participants' picks
+
+            const picksResponse = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
+
+            const picksData = await picksResponse.arrayBuffer();
+
+            const picksWorkbook = XLSX.read(picksData, { type: 'array' });
+
+ 
+
+            const standings = {};
+
+ 
+
+            picksWorkbook.SheetNames.forEach(sheetName => {
+
+                if (sheetName === 'ALL_ENTRIES') return; // Skip the "ALL_ENTRIES" sheet
+
+ 
+
+                const sheet = picksWorkbook.Sheets[sheetName];
+
+                const picks = XLSX.utils.sheet_to_json(sheet);
+
+ 
+
+                let totalPoints = 0;
+
+ 
+
+                picks.forEach(pick => {
+
+                    // Ensure the pick has valid entries
+
+                    if (pick['Event'] && pick['Winner'] && pick['2nd Place'] && pick['3rd Place']) {
+
+                        const result = results.find(r => r['Event'] === pick['Event']);
+
+                        if (result) {
+
+                            let points = 0;
+
+                            if (result['Winner'] === pick['Winner']) points += 10;
+
+                            if (result['2nd Place'] === pick['2nd Place']) points += 6;
+
+                            if (result['3rd Place'] === pick['3rd Place']) points += 4;
+
+                            if (points === 20) points += 5; // Bonus for all correct
+
+                            totalPoints += points;
+
+                        }
+
+                    }
+
+                });
+
+ 
+
+                standings[sheetName] = totalPoints;
+
+            });
+
+ 
+
+            displayStandings(standings);
+
+        }
+
+       
+
+        function displayStandings(standings) {
+
+            const standingsContainer = document.getElementById('standingsContainer');
+
+            standingsContainer.innerHTML = ''; // Clear previous content
+
+ 
+
+            // Convert standings object to array and sort by points (descending order)
+
+            const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
+
+ 
+
+            // Create a table for the standings
+
+            const table = document.createElement('table');
+
+            table.className = 'standings-table';
+
+            table.border = 1;
+
+            table.style.margin = 'auto'; // Center the table
+
+            const header = table.createTHead();
+
+            const headerRow = header.insertRow();
+
+            ['Participant', 'Current Points'].forEach(text => {
+
+                const th = document.createElement('th');
+
+                th.textContent = text;
+
+                headerRow.appendChild(th);
+
+            });
+
+ 
+
+            const tbody = table.createTBody();
+
+ 
+
+            sortedStandings.forEach(([participant, points]) => {
+
+                const tr = tbody.insertRow();
+
+                const nameCell = tr.insertCell();
+
+                const pointsCell = tr.insertCell();
+
+ 
+
+                nameCell.textContent = participant;
+
+                pointsCell.textContent = points;
+
+            });
+
+ 
+
+            standingsContainer.appendChild(table);
+
+        }
+
+        // Function to load and process results for color coding and standings, without displaying the table
+
+async function loadResults() {
+
+    const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
+
+    const data = await response.arrayBuffer();
+
+    const workbook = XLSX.read(data, { type: 'array' });
+
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+    const json = XLSX.utils.sheet_to_json(sheet);
+
+ 
+
+    // Process the results data without displaying it on the page
+
+    // You can use the 'json' data for further processing like color coding or standings calculations
+
+}
+
+ 
+
+// Ensure this function is called where appropriate
+
+document.getElementById('pageSelector').addEventListener('change', function() {
+
+    const selectedPage = this.value;
+
+    document.querySelectorAll('.content').forEach(section => {
+
+        section.style.display = 'none';
+
+    });
+
+    document.querySelector(selectedPage).style.display = 'block';
+
+ 
+
+    if (selectedPage === '#picks') {
+
+        loadPicks();
+
+    } else if (selectedPage === '#standings') {
+
+        calculateStandings();
+
+    } else if (selectedPage === '#results') {
+
+        loadResults();  // Still load results for processing but don't display
+
+    }
+
+});
+
+ 
+
+ 
+
+        // Live clock function for 12-hour format with AM/PM
+
+        function updateClock() {
+
+            const now = new Date();
+
+            const year = now.getFullYear();
+
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+
+            const day = String(now.getDate()).padStart(2, '0');
+
+            let hours = now.getHours();
+
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+
+            hours = hours % 12;
+
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+
+            const formattedTime = `${hours}:${minutes}:${seconds} ${ampm} EDT`;
+
+            const formattedDate = `${year}-${month}-${day}`;
+
+            document.getElementById('clock').textContent = `${formattedDate} ${formattedTime}`;
+
+ 
+
+            checkEventCompletion(now);
+
+        }
+
+        setInterval(updateClock, 1000);
+
+ 
+
+        // Function to check and mark completed events
+
+        function checkEventCompletion(currentTime) {
+
+            const eventItems = document.querySelectorAll('.event-list li.event');
+
+            eventItems.forEach(item => {
+
+                const eventDate = new Date(item.getAttribute('data-event-date'));
+
+                if (currentTime >= eventDate && !item.classList.contains('completed')) { // Check if event is completed and not already marked
+
+                    item.classList.add('completed');
+
+ 
+
+                    // Extract the event name (e.g., "100m (W) - 3:20pm")
+
+                    const eventText = item.textContent;
+
+ 
+
+                    // Replace the item content with a strike-through text and add "COMPLETED" below
+
+                    item.innerHTML = `<span style="text-decoration: line-through;">${eventText}</span><br><span class="completed-text">COMPLETED</span>`;
+
+                }
+
+            });
+
+        }
+
+ 
+
+        // Function to toggle popup on click for mobile users
+
+        document.querySelectorAll('.event-list li').forEach(item => {
+
+            // Toggle the popup on click
+
+            item.addEventListener('click', function() {
+
+                const popup = this.querySelector('.popup');
+
+                if (popup) {
+
+                    // Toggle the display of the popup
+
+                    popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+
+                }
+
+            });
+
+ 
+
+            // Close the popup if clicked outside of it
+
+            document.addEventListener('click', function(event) {
+
+                if (!item.contains(event.target)) {
+
+                    const popup = item.querySelector('.popup');
+
+                    if (popup) {
+
+                        popup.style.display = 'none';
+
+                    }
+
+                }
+
+            });
+
+        });
+
+    </script>
+
+ 
+
 </body>
+
 </html>
