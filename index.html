@@ -13,8 +13,23 @@
             background-color: #f4f4f4;
             display: flex;
             flex-direction: column;
-            text-align: center; /* Center text by default, can be overridden */
+            text-align: center;
         }
+        .correct {
+    background-color: lightgreen;
+    color: black;
+}
+
+.incorrect {
+    background-color: lightcoral;
+    color: black;
+}
+
+.not-entered {
+    background-color: lightyellow;
+    color: black;
+}
+
 
         .wrapper {
             flex: 1;
@@ -33,8 +48,8 @@
         header .brand {
             flex-grow: 1;
             font-size: 18px;
-            text-align: left; /* Left-align header brand */
-            padding-left: 10px; /* Add padding for some space */
+            text-align: left;
+            padding-left: 10px;
         }
 
         header select {
@@ -54,9 +69,9 @@
         }
 
         h1 {
-            text-align: center; /* Left-align section titles */
+            text-align: center;
             margin-bottom: 20px;
-            padding-left: 10px; /* Add padding for some space */
+            padding-left: 10px;
         }
 
         .event-list {
@@ -74,6 +89,7 @@
             border-radius: 5px;
             font-size: 16px;
             text-align: center;
+            position: relative;
         }
 
         .event-list li.completed {
@@ -95,43 +111,25 @@
             background-color: #f1f1f1;
         }
 
-        h2 {
-            margin-top: 40px;
-            text-align: center;
+        /* Popup styling */
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #333;
+            color: white;
+            border-radius: 5px;
+            padding: 20px;
+            width: 300px;
+            z-index: 1000;
+            text-align: left;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
         }
 
-        .correct {
-            background-color: lightgreen;
-            text-align: center;
-        }
-
-        .incorrect {
-            background-color: lightcoral;
-            text-align: center;
-        }
-
-        .not-entered {
-            background-color: lightyellow;
-            text-align: center;
-        }
-
-        .clock {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 18px;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .race-times-container {
-            display: flex;
-            justify-content: center;
-        }
-
-        .race-times {
-            margin-top: 20px;
-            text-align: left; /* Left-align race times */
-            width: 100%;
-            max-width: 800px;
+        .event-list li:hover .popup {
+            display: block;
         }
 
         footer {
@@ -147,7 +145,7 @@
             align-items: flex-start;
             min-height: auto;
             padding-top: 20px;
-            margin-top: 0; /* Remove margin top */
+            margin-top: 0;
         }
 
         #resultsContainer table, #standingsContainer table {
@@ -163,7 +161,6 @@
             padding: 8px;
             border: 1px solid #ddd;
         }
-        
 
         /* Media query for smaller screens */
         @media (max-width: 600px) {
@@ -211,7 +208,7 @@
 <body>
 
     <header>
-        <div class="brand">SCRC Pool</div>
+        <div class="brand">SCRC Olympics Pool</div>
         <select id="pageSelector">
             <option value="#home">Home</option>
             <option value="#picks">Picks</option>
@@ -228,6 +225,8 @@
             <div class="race-times-container">
                 <div class="race-times">
                     <h1>Race Schedule</h1>
+                    <p4>Hover or click on each event for start lists!
+                        <br>Results are viewable on the 'Results' page!</p4>
                     <ul class="event-list">
                         <li class="event" data-event-date="2024-08-03T15:30:00">
                             Aug 3 - 100m (W) - 3:20pm
@@ -235,30 +234,52 @@
                         <li class="event" data-event-date="2024-08-04T16:00:00">
                             Aug 4 - 100m (M) - 3:50pm
                         </li>
-                        <li class="event" data-event-date="2024-08-05T16:30:00">
-                            Aug 5 - No scheduled pool events
-                        </li>
                         <li class="event" data-event-date="2024-08-06T15:50:00">
                             Aug 6 - 200m (W) - 3:40pm
                         </li>
                         <li class="event" data-event-date="2024-08-07T15:30:00">
                             Aug 7 - 400m (M) - 3:20pm
+                            <div class="popup">
+                                <p>Start List:</p>
+                                <p>Lane 1: C. Bailey (USA) - 44.31</p>
+                                <p>Lane 2: S. Ogazi (NGA) - 44.41</p>
+                                <p>Lane 3: M. Norman (USA) - 44.26</p>
+                                <p>Lane 4: K. James (GRN) - 43.78</p>
+                                <p>Lane 5: M. Hudson-Smith (GBR) - 44.07</p>
+                                <p>Lane 6: M. Samukonga (ZAM) - 43.81</p>
+                                <p>Lane 7: Q. Hall (USA)- 43.95</p>
+                                <p>Lane 8: J. Richards (TTO) - 44.33</p>
+                                <p><br>Results will be posted on the results page!</p>
+                            </div>
                         </li>
                         <li class="event" data-event-date="2024-08-08T14:40:00">
                             Aug 8 - 200m (M) - 2:30pm
+                            <div class="popup">
+                                <p>Start List:<br><br>3:00pm August 7th!</p>
+                            </div>
                         </li>
                         <li class="event" data-event-date="2024-08-09T13:40:00">
                             Aug 9 - 4x100m Relay (W) - 1:30pm
+                            <div class="popup">
+                                <p>Start List:<br><br>9:00am August 8th!</p>
+                            </div>
                         </li>
                         <li class="event" data-event-date="2024-08-09T13:57:00">
                             Aug 9 - 4x100m Relay (M) - 1:47pm
+                            <div class="popup">
+                                <p>Start List:<br><br>9:00am August 8th!</p>
+                            </div>
                         </li>
                         <li class="event" data-event-date="2024-08-09T14:10:00">
                             Aug 9 - 400m (W) - 2:00pm
+                            <div class="popup">
+                                <p>Start List:<br><br>4:00pm August 7th!</p>
+                            </div>
                         </li>
                     </ul>
                 </div>
             </div>
+            <h3>Winner will be announced at 2:30pm August 9th!</h3>
         </section>
 
         <section id="picks" class="content">
@@ -282,7 +303,7 @@
     </div>
 
     <footer>
-        &copy; PulseDynamics (v1.0.1)
+        &copy; PulseDynamics (v1.1.0)
     </footer>
 
     <script>
@@ -415,40 +436,41 @@
 
             displayStandings(standings);
         }
-
+        
         function displayStandings(standings) {
-            const standingsContainer = document.getElementById('standingsContainer');
-            standingsContainer.innerHTML = ''; // Clear previous content
+    const standingsContainer = document.getElementById('standingsContainer');
+    standingsContainer.innerHTML = ''; // Clear previous content
 
-            // Convert standings object to array and sort by points (descending order)
-            const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
+    // Convert standings object to array and sort by points (descending order)
+    const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
 
-            // Create a table for the standings
-            const table = document.createElement('table');
-            table.className = 'standings-table';
-            table.border = 1;
-            table.style.margin = 'auto'; // Center the table
-            const header = table.createTHead();
-            const headerRow = header.insertRow();
-            ['Participant', 'Current Points'].forEach(text => {
-                const th = document.createElement('th');
-                th.textContent = text;
-                headerRow.appendChild(th);
-            });
+    // Create a table for the standings
+    const table = document.createElement('table');
+    table.className = 'standings-table';
+    table.border = 1;
+    table.style.margin = 'auto'; // Center the table
+    const header = table.createTHead();
+    const headerRow = header.insertRow();
+    ['Participant', 'Current Points'].forEach(text => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        headerRow.appendChild(th);
+    });
 
-            const tbody = table.createTBody();
+    const tbody = table.createTBody();
 
-            sortedStandings.forEach(([participant, points]) => {
-                const tr = tbody.insertRow();
-                const nameCell = tr.insertCell();
-                const pointsCell = tr.insertCell();
+    sortedStandings.forEach(([participant, points]) => {
+        const tr = tbody.insertRow();
+        const nameCell = tr.insertCell();
+        const pointsCell = tr.insertCell();
 
-                nameCell.textContent = participant;
-                pointsCell.textContent = points;
-            });
+        nameCell.textContent = participant;
+        pointsCell.textContent = points;
+    });
 
-            standingsContainer.appendChild(table);
-        }
+    standingsContainer.appendChild(table);
+}
+
 
         // Function to load and display results on the Results page
         async function loadResults() {
@@ -508,20 +530,20 @@
 
         // Function to check and mark completed events
         function checkEventCompletion(currentTime) {
-            const eventItems = document.querySelectorAll('.event-list li.event');
-            eventItems.forEach(item => {
-                const eventDate = new Date(item.getAttribute('data-event-date'));
-                if (currentTime >= eventDate) {
-                    item.classList.add('completed');
-                    if (!item.querySelector('.completed-text')) {
-                        const completedText = document.createElement('span');
-                        completedText.className = 'completed-text';
-                        completedText.textContent = 'COMPLETED';
-                        item.appendChild(completedText);
-                    }
-                }
-            });
+    const eventItems = document.querySelectorAll('.event-list li.event');
+    eventItems.forEach(item => {
+        const eventDate = new Date(item.getAttribute('data-event-date'));
+        if (currentTime >= eventDate && !item.classList.contains('completed')) { // Check if event is completed and not already marked
+            item.classList.add('completed');
+
+            // Extract the event name (e.g., "100m (W) - 3:20pm")
+            const eventText = item.textContent;
+
+            // Replace the item content with a strike-through text and add "COMPLETED" below
+            item.innerHTML = `<span style="text-decoration: line-through;">${eventText}</span><br><span class="completed-text">COMPLETED</span>`;
         }
+    });
+}
 
     </script>
 
