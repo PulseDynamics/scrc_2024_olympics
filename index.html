@@ -15,21 +15,21 @@
             flex-direction: column;
             text-align: center;
         }
+
         .correct {
-    background-color: lightgreen;
-    color: black;
-}
+            background-color: lightgreen;
+            color: black;
+        }
 
-.incorrect {
-    background-color: lightcoral;
-    color: black;
-}
+        .incorrect {
+            background-color: lightcoral;
+            color: black;
+        }
 
-.not-entered {
-    background-color: lightyellow;
-    color: black;
-}
-
+        .not-entered {
+            background-color: lightyellow;
+            color: black;
+        }
 
         .wrapper {
             flex: 1;
@@ -90,6 +90,7 @@
             font-size: 16px;
             text-align: center;
             position: relative;
+            cursor: pointer;
         }
 
         .event-list li.completed {
@@ -181,7 +182,7 @@
 
             h1 {
                 font-size: 1.2em;
-                text-align: left;
+                text-align: center;
             }
 
             .clock {
@@ -225,8 +226,7 @@
             <div class="race-times-container">
                 <div class="race-times">
                     <h1>Race Schedule</h1>
-                    <p4>Hover or click on each event for start lists!
-                        <br>Results are viewable on the 'Results' page!</p4>
+                    <p>Click on the upcoming events for startlists!<br>Completed events are viewable on the 'Results' page!</p>
                     <ul class="event-list">
                         <li class="event" data-event-date="2024-08-03T15:30:00">
                             Aug 3 - 100m (W) - 3:20pm
@@ -240,7 +240,7 @@
                         <li class="event" data-event-date="2024-08-07T15:30:00">
                             Aug 7 - 400m (M) - 3:20pm
                             <div class="popup">
-                                <p>Start List:</p>
+                                <p>Startlist:</p>
                                 <p>Lane 1: C. Bailey (USA) - 44.31</p>
                                 <p>Lane 2: S. Ogazi (NGA) - 44.41</p>
                                 <p>Lane 3: M. Norman (USA) - 44.26</p>
@@ -255,25 +255,25 @@
                         <li class="event" data-event-date="2024-08-08T14:40:00">
                             Aug 8 - 200m (M) - 2:30pm
                             <div class="popup">
-                                <p>Start List:<br><br>3:00pm August 7th!</p>
+                                <p>Startlist:<br><br>3:00pm August 7th!</p>
                             </div>
                         </li>
                         <li class="event" data-event-date="2024-08-09T13:40:00">
                             Aug 9 - 4x100m Relay (W) - 1:30pm
                             <div class="popup">
-                                <p>Start List:<br><br>9:00am August 8th!</p>
+                                <p>Startlist:<br><br>9:00am August 8th!</p>
                             </div>
                         </li>
                         <li class="event" data-event-date="2024-08-09T13:57:00">
                             Aug 9 - 4x100m Relay (M) - 1:47pm
                             <div class="popup">
-                                <p>Start List:<br><br>9:00am August 8th!</p>
+                                <p>Startlist:<br><br>9:00am August 8th!</p>
                             </div>
                         </li>
                         <li class="event" data-event-date="2024-08-09T14:10:00">
                             Aug 9 - 400m (W) - 2:00pm
                             <div class="popup">
-                                <p>Start List:<br><br>4:00pm August 7th!</p>
+                                <p>Startlist:<br><br>4:00pm August 7th!</p>
                             </div>
                         </li>
                     </ul>
@@ -303,7 +303,7 @@
     </div>
 
     <footer>
-        &copy; PulseDynamics (v1.1.0)
+        &copy; PulseDynamics (v1.1.1)
     </footer>
 
     <script>
@@ -438,39 +438,38 @@
         }
         
         function displayStandings(standings) {
-    const standingsContainer = document.getElementById('standingsContainer');
-    standingsContainer.innerHTML = ''; // Clear previous content
+            const standingsContainer = document.getElementById('standingsContainer');
+            standingsContainer.innerHTML = ''; // Clear previous content
 
-    // Convert standings object to array and sort by points (descending order)
-    const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
+            // Convert standings object to array and sort by points (descending order)
+            const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
 
-    // Create a table for the standings
-    const table = document.createElement('table');
-    table.className = 'standings-table';
-    table.border = 1;
-    table.style.margin = 'auto'; // Center the table
-    const header = table.createTHead();
-    const headerRow = header.insertRow();
-    ['Participant', 'Current Points'].forEach(text => {
-        const th = document.createElement('th');
-        th.textContent = text;
-        headerRow.appendChild(th);
-    });
+            // Create a table for the standings
+            const table = document.createElement('table');
+            table.className = 'standings-table';
+            table.border = 1;
+            table.style.margin = 'auto'; // Center the table
+            const header = table.createTHead();
+            const headerRow = header.insertRow();
+            ['Participant', 'Current Points'].forEach(text => {
+                const th = document.createElement('th');
+                th.textContent = text;
+                headerRow.appendChild(th);
+            });
 
-    const tbody = table.createTBody();
+            const tbody = table.createTBody();
 
-    sortedStandings.forEach(([participant, points]) => {
-        const tr = tbody.insertRow();
-        const nameCell = tr.insertCell();
-        const pointsCell = tr.insertCell();
+            sortedStandings.forEach(([participant, points]) => {
+                const tr = tbody.insertRow();
+                const nameCell = tr.insertCell();
+                const pointsCell = tr.insertCell();
 
-        nameCell.textContent = participant;
-        pointsCell.textContent = points;
-    });
+                nameCell.textContent = participant;
+                pointsCell.textContent = points;
+            });
 
-    standingsContainer.appendChild(table);
-}
-
+            standingsContainer.appendChild(table);
+        }
 
         // Function to load and display results on the Results page
         async function loadResults() {
@@ -530,21 +529,42 @@
 
         // Function to check and mark completed events
         function checkEventCompletion(currentTime) {
-    const eventItems = document.querySelectorAll('.event-list li.event');
-    eventItems.forEach(item => {
-        const eventDate = new Date(item.getAttribute('data-event-date'));
-        if (currentTime >= eventDate && !item.classList.contains('completed')) { // Check if event is completed and not already marked
-            item.classList.add('completed');
+            const eventItems = document.querySelectorAll('.event-list li.event');
+            eventItems.forEach(item => {
+                const eventDate = new Date(item.getAttribute('data-event-date'));
+                if (currentTime >= eventDate && !item.classList.contains('completed')) { // Check if event is completed and not already marked
+                    item.classList.add('completed');
 
-            // Extract the event name (e.g., "100m (W) - 3:20pm")
-            const eventText = item.textContent;
+                    // Extract the event name (e.g., "100m (W) - 3:20pm")
+                    const eventText = item.textContent;
 
-            // Replace the item content with a strike-through text and add "COMPLETED" below
-            item.innerHTML = `<span style="text-decoration: line-through;">${eventText}</span><br><span class="completed-text">COMPLETED</span>`;
+                    // Replace the item content with a strike-through text and add "COMPLETED" below
+                    item.innerHTML = `<span style="text-decoration: line-through;">${eventText}</span><br><span class="completed-text">COMPLETED</span>`;
+                }
+            });
         }
-    });
-}
 
+        // Function to toggle popup on click for mobile users
+        document.querySelectorAll('.event-list li').forEach(item => {
+            // Toggle the popup on click
+            item.addEventListener('click', function() {
+                const popup = this.querySelector('.popup');
+                if (popup) {
+                    // Toggle the display of the popup
+                    popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+                }
+            });
+
+            // Close the popup if clicked outside of it
+            document.addEventListener('click', function(event) {
+                if (!item.contains(event.target)) {
+                    const popup = item.querySelector('.popup');
+                    if (popup) {
+                        popup.style.display = 'none';
+                    }
+                }
+            });
+        });
     </script>
 
 </body>
