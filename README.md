@@ -2,6 +2,8 @@
 
 Welcome to the **SCRC Olympics Pool 2024** repository! This project hosts the source code and data for the SCRC Olympics Pool website, which allows participants to engage with the 2024 Summer Olympics by making predictions, viewing standings, and checking results in real-time.
 
+Version: ![GitHub Release](https://img.shields.io/github/v/release/PulseDynamics/scrc_2024_olympics)
+
 ## Table of Contents
 
 1. [Project Overview](#project-overview)
