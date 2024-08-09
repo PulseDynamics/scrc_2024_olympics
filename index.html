@@ -18,20 +18,25 @@
         header .brand {
             flex-grow: 1; font-size: 18px; text-align: left; padding-left: 10px;
         }
-        .content { flex: 1; padding: 20px; }
+        header select {
+            font-size: 16px; padding: 5px; border: none; border-radius: 5px;
+            margin-left: auto; text-align: center;
+        }
+        .content { flex: 1; padding: 20px; display: none; }
+        .content#home { display: block; }
         h1 { text-align: center; margin-bottom: 20px; padding-left: 10px; }
         footer {
             text-align: center; padding: 10px; background-color: #333;
             color: white;
         }
-        #standingsContainer {
+        #standingsContainer, #picksContainer {
             display: flex; justify-content: center;
             align-items: flex-start; min-height: auto; padding-top: 20px;
         }
-        #standingsContainer table {
+        #standingsContainer table, #picksContainer table {
             border-collapse: collapse; width: 100%; max-width: 800px;
         }
-        #standingsContainer th, #standingsContainer td {
+        #standingsContainer th, #standingsContainer td, #picksContainer th, #picksContainer td {
             text-align: center; padding: 8px; border: 1px solid #ddd;
         }
     </style>
@@ -40,16 +45,65 @@
 <body>
     <header>
         <div class="brand">SCRC Olympics Pool</div>
+        <select id="pageSelector">
+            <option value="#home">Home</option>
+            <option value="#picks">Picks</option>
+        </select>
     </header>
     <div class="wrapper">
-        <section id="home" class="content" style="display: block;">
+        <section id="home" class="content">
             <h2>Shawna is the winner!</h2>
             <div id="standingsContainer"></div>
             <p>Website will terminate at 11:59pm August 9th.</p>
         </section>
+        <section id="picks" class="content">
+            <h1>Participants' Picks</h1>
+            <div id="picksContainer"></div>
+        </section>
     </div>
     <footer>&copy; PulseDynamics (v1.2.0)</footer>
     <script>
+        document.getElementById('pageSelector').addEventListener('change', function() {
+            const selectedPage = this.value;
+            document.querySelectorAll('.content').forEach(section => section.style.display = 'none');
+            document.querySelector(selectedPage).style.display = 'block';
+            if (selectedPage === '#picks') loadPicks();
+        });
+
+        async function loadPicks() {
+            const response = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
+            const data = await response.arrayBuffer();
+            const workbook = XLSX.read(data, { type: 'array' });
+            const picksContainer = document.getElementById('picksContainer');
+            picksContainer.innerHTML = '';
+            workbook.SheetNames.forEach(sheetName => {
+                if (sheetName === 'ALL_ENTRIES') return;
+                const sheet = workbook.Sheets[sheetName];
+                const json = XLSX.utils.sheet_to_json(sheet);
+                const table = document.createElement('table');
+                table.border = 1; table.style.margin = 'auto';
+                const header = table.createTHead();
+                const headerRow = header.insertRow();
+                ['Event', 'Winner', '2nd Place', '3rd Place'].forEach(text => {
+                    const th = document.createElement('th');
+                    th.textContent = text;
+                    headerRow.appendChild(th);
+                });
+                const tbody = table.createTBody();
+                json.forEach(row => {
+                    const tr = tbody.insertRow();
+                    ['Event', 'Winner', '2nd Place', '3rd Place'].forEach((key, index) => {
+                        const td = tr.insertCell();
+                        td.textContent = row[key] || '("")';
+                    });
+                });
+                const title = document.createElement('h2');
+                title.textContent = sheetName;
+                picksContainer.appendChild(title);
+                picksContainer.appendChild(table);
+            });
+        }
+
         async function calculateStandings() {
             const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
             const data = await response.arrayBuffer();
@@ -109,23 +163,6 @@
         }
 
         calculateStandings();
-
-        function updateClock() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            let hours = now.getHours();
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? 12 : 12;
-            const formattedTime = `${hours}:${minutes}:${seconds} ${ampm} EDT`;
-            const formattedDate = `${year}-${month}-${day}`;
-            document.getElementById('clock').textContent = `${formattedDate} ${formattedTime}`;
-        }
-        setInterval(updateClock, 1000);
     </script>
 </body>
 </html>
