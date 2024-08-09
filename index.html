@@ -22,7 +22,7 @@
             font-size: 16px; padding: 5px; border: none; border-radius: 5px;
             margin-left: auto; text-align: center;
         }
-        .content { flex: 1; padding: 20px; display: none; }
+        .content { flex: 1; padding: 20px; display: none; overflow-y: auto; }
         .content#home { display: block; }
         h1 { text-align: center; margin-bottom: 20px; padding-left: 10px; }
         footer {
@@ -30,14 +30,29 @@
             color: white;
         }
         #standingsContainer, #picksContainer {
-            display: flex; justify-content: center;
-            align-items: flex-start; min-height: auto; padding-top: 20px;
+            display: flex; flex-direction: column;
+            align-items: center; padding-top: 20px;
+            width: 100%;
         }
-        #standingsContainer table, #picksContainer table {
-            border-collapse: collapse; width: 100%; max-width: 800px;
+        #picksContainer .participant-picks {
+            background-color: #fff; border: 1px solid #ddd; border-radius: 5px;
+            padding: 10px; margin-bottom: 10px; width: 90%; max-width: 500px;
+            text-align: left;
         }
-        #standingsContainer th, #standingsContainer td, #picksContainer th, #picksContainer td {
-            text-align: center; padding: 8px; border: 1px solid #ddd;
+        .participant-picks h2 {
+            font-size: 18px; margin-bottom: 10px; text-align: center;
+        }
+        .pick-item {
+            margin-bottom: 5px; font-size: 16px;
+        }
+        .pick-item span {
+            font-weight: bold; color: #333;
+        }
+        @media (max-width: 600px) {
+            .participant-picks { width: 100%; max-width: none; }
+            header select { font-size: 14px; padding: 4px; }
+            h1 { font-size: 1.2em; text-align: center; }
+            .pick-item { font-size: 14px; }
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
@@ -80,27 +95,21 @@
                 if (sheetName === 'ALL_ENTRIES') return;
                 const sheet = workbook.Sheets[sheetName];
                 const json = XLSX.utils.sheet_to_json(sheet);
-                const table = document.createElement('table');
-                table.border = 1; table.style.margin = 'auto';
-                const header = table.createTHead();
-                const headerRow = header.insertRow();
-                ['Event', 'Winner', '2nd Place', '3rd Place'].forEach(text => {
-                    const th = document.createElement('th');
-                    th.textContent = text;
-                    headerRow.appendChild(th);
-                });
-                const tbody = table.createTBody();
-                json.forEach(row => {
-                    const tr = tbody.insertRow();
-                    ['Event', 'Winner', '2nd Place', '3rd Place'].forEach((key, index) => {
-                        const td = tr.insertCell();
-                        td.textContent = row[key] || '("")';
-                    });
-                });
+                const participantDiv = document.createElement('div');
+                participantDiv.className = 'participant-picks';
                 const title = document.createElement('h2');
                 title.textContent = sheetName;
-                picksContainer.appendChild(title);
-                picksContainer.appendChild(table);
+                participantDiv.appendChild(title);
+                json.forEach(row => {
+                    const event = document.createElement('div');
+                    event.className = 'pick-item';
+                    event.innerHTML = `<span>Event:</span> ${row['Event']}<br>
+                                       <span>Winner:</span> ${row['Winner']}<br>
+                                       <span>2nd Place:</span> ${row['2nd Place']}<br>
+                                       <span>3rd Place:</span> ${row['3rd Place']}`;
+                    participantDiv.appendChild(event);
+                });
+                picksContainer.appendChild(participantDiv);
             });
         }
 
