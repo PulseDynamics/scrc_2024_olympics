@@ -95,6 +95,21 @@
         <section id="home" class="content" style="display: block;">
             <h2>Welcome to the 2024 Summer Olympics Pool</h2>
             <div class="clock" id="clock"></div>
+            <!-- Podium Display -->
+    <div id="podium" style="display: flex; justify-content: center; align-items: flex-end; height: 200px; margin-top: 20px;">
+        <div id="second" style="flex: 1; text-align: center;">
+            <div style="background-color: silver; padding: 10px; border-radius: 5px;">2nd Place</div>
+            <div id="secondPlace" style="background-color: lightgray; padding: 10px; margin-top: 5px;"></div>
+        </div>
+        <div id="first" style="flex: 1; text-align: center;">
+            <div style="background-color: gold; padding: 10px; border-radius: 5px;">1st Place</div>
+            <div id="firstPlace" style="background-color: lightyellow; padding: 10px; margin-top: 5px;"></div>
+        </div>
+        <div id="third" style="flex: 1; text-align: center;">
+            <div style="background-color: #cd7f32; padding: 10px; border-radius: 5px;">3rd Place</div>
+            <div id="thirdPlace" style="background-color: #deb887; padding: 10px; margin-top: 5px;"></div>
+        </div>
+    </div>
             <!--
             <div class="race-times-container">
                 <div class="race-times">
@@ -320,37 +335,41 @@
         }
 
         function displayStandings(standings) {
-            const standingsContainer = document.getElementById('standingsContainer');
-            standingsContainer.innerHTML = '';
-            const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
-            const table = document.createElement('table');
-            table.className = 'standings-table'; table.border = 1;
-            table.style.margin = 'auto';
-            const header = table.createTHead();
-            const headerRow = header.insertRow();
-            ['Participant', 'Current Points'].forEach(text => {
-                const th = document.createElement('th');
-                th.textContent = text;
-                headerRow.appendChild(th);
-            });
-            const tbody = table.createTBody();
-            sortedStandings.forEach(([participant, points]) => {
-                const tr = tbody.insertRow();
-                const nameCell = tr.insertCell();
-                const pointsCell = tr.insertCell();
-                nameCell.textContent = participant;
-                pointsCell.textContent = points;
-            });
-            standingsContainer.appendChild(table);
-        }
+    const standingsContainer = document.getElementById('standingsContainer');
+    standingsContainer.innerHTML = '';
+    const sortedStandings = Object.entries(standings).sort(([, pointsA], [, pointsB]) => pointsB - pointsA);
+    const table = document.createElement('table');
+    table.className = 'standings-table'; table.border = 1;
+    table.style.margin = 'auto';
+    const header = table.createTHead();
+    const headerRow = header.insertRow();
+    ['Participant', 'Current Points'].forEach(text => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        headerRow.appendChild(th);
+    });
+    const tbody = table.createTBody();
+    sortedStandings.forEach(([participant, points]) => {
+        const tr = tbody.insertRow();
+        const nameCell = tr.insertCell();
+        const pointsCell = tr.insertCell();
+        nameCell.textContent = participant;
+        pointsCell.textContent = points;
+    });
+    standingsContainer.appendChild(table);
 
-        async function loadResults() {
-            const response = await fetch('SCRC_2024_Olympics_Pool_Results.xlsx');
-            const data = await response.arrayBuffer();
-            const workbook = XLSX.read(data, { type: 'array' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const json = XLSX.utils.sheet_to_json(sheet);
+    // Update Podium Display
+    if (sortedStandings.length > 0) {
+        document.getElementById('firstPlace').textContent = sortedStandings[0][0];
+        if (sortedStandings.length > 1) {
+            document.getElementById('secondPlace').textContent = sortedStandings[1][0];
         }
+        if (sortedStandings.length > 2) {
+            document.getElementById('thirdPlace').textContent = sortedStandings[2][0];
+        }
+    }
+}
+
 
         function updateClock() {
             const now = new Date();
