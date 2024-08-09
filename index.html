@@ -89,8 +89,17 @@
             <option value="#picks">Picks</option>
             <option value="#standings">Standings</option>
             <option value="#results">Results</option>
+            <option value="#winner">Winner</option>
         </select>
     </header>
+    <div class="wrapper">
+        <!-- Existing sections... -->
+        <section id="winner" class="content">
+            <h1>Winner</h1>
+            <p>Congratulations to our winner!</p>
+            <!-- Add any additional content you want to display on this page -->
+        </section>
+    </div>
     <div class="wrapper">
         <section id="home" class="content" style="display: block;">
             <h2>Welcome to the 2024 Summer Olympics Pool</h2>
@@ -278,14 +287,30 @@
     </div>
     <footer>&copy; PulseDynamics (v1.2.0)</footer>
     <script>
+        <script>
         document.getElementById('pageSelector').addEventListener('change', function() {
             const selectedPage = this.value;
             document.querySelectorAll('.content').forEach(section => section.style.display = 'none');
-            document.querySelector(selectedPage).style.display = 'block';
-            if (selectedPage === '#picks') loadPicks();
-            else if (selectedPage === '#standings') calculateStandings();
-            else if (selectedPage === '#results') loadResults();
+            if (selectedPage === '#winner') {
+                authenticateUser();
+            } else {
+                document.querySelector(selectedPage).style.display = 'block';
+                if (selectedPage === '#picks') loadPicks();
+                else if (selectedPage === '#standings') calculateStandings();
+                else if (selectedPage === '#results') loadResults();
+            }
         });
+
+        function authenticateUser() {
+            const username = prompt("Enter username:");
+            const password = prompt("Enter password:");
+            if (username === 'test' && password === 'test1') {
+                document.querySelector('#winner').style.display = 'block';
+            } else {
+                alert("Incorrect username or password. Access denied.");
+                document.querySelector('#home').style.display = 'block';
+            }
+        }
 
         async function loadPicks() {
             const response = await fetch('SCRC_2024_Olympics_Pool_PICKS.xlsx');
